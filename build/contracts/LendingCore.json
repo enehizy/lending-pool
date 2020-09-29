@@ -1,0 +1,128 @@
+{
+  "contractName": "LendingCore",
+  "abi": [],
+  "metadata": "{\"compiler\":{\"version\":\"0.6.6+commit.6c089d02\"},\"language\":\"Solidity\",\"output\":{\"abi\":[],\"devdoc\":{\"methods\":{}},\"userdoc\":{\"methods\":{}}},\"settings\":{\"compilationTarget\":{\"/C/Users/osasola/Desktop/js-projects/blockchain/lending/contracts/LendingCore.sol\":\"LendingCore\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"/C/Users/osasola/Desktop/js-projects/blockchain/lending/contracts/LendingCore.sol\":{\"keccak256\":\"0xdd47c01fd5c5c640cb0393e7719323e54075b1f6df069f2fc43e1169a8b35cdb\",\"urls\":[\"bzz-raw://397472830338b5897cdd0bf2f130e9e4ff62b50c8fe1d783b4c22b146ce046cc\",\"dweb:/ipfs/QmdNGWLsBRD4xXxpLVShW9sCWNr2XmNv2EXXfcmeJp5s3M\"]},\"@openzeppelin/contracts/token/ERC20/IERC20.sol\":{\"keccak256\":\"0x5c26b39d26f7ed489e555d955dcd3e01872972e71fdd1528e93ec164e4f23385\",\"urls\":[\"bzz-raw://efdc632af6960cf865dbc113665ea1f5b90eab75cc40ec062b2f6ae6da582017\",\"dweb:/ipfs/QmfAZFDuG62vxmAN9DnXApv7e7PMzPqi4RkqqZHLMSQiY5\"]}},\"version\":1}",
+  "bytecode": "0x6080604052348015600f57600080fd5b50603f80601d6000396000f3fe6080604052600080fdfea26469706673582212204cf36be6026f9e45011d81fa14e1606ea6ff91a04d8ee8a99b5c2c2e48042dcc64736f6c63430006060033",
+  "deployedBytecode": "0x6080604052600080fdfea26469706673582212204cf36be6026f9e45011d81fa14e1606ea6ff91a04d8ee8a99b5c2c2e48042dcc64736f6c63430006060033",
+  "sourceMap": "85:704:4:-:0;;;;5:9:-1;2:2;;;27:1;24;17:12;2:2;85:704:4;;;;;;;",
+  "deployedSourceMap": "85:704:4:-:0;;;12:1:-1;9;2:12",
+  "source": "pragma solidity ^0.6.0;\r\nimport '@openzeppelin/contracts/token/ERC20/IERC20.sol';\r\n\r\ncontract LendingCore{\r\n    // function calculateCollateral(uint loan) external returns(uint _collateral);\r\n\r\n    // function calculateLoan(uint collateral) external returns(uint _loan);\r\n\r\n    // function borrowNew() external payable;\r\n\r\n    // function reclaimCollateral(uint loanId,uint repayment) external;\r\n    \r\n    // function exitingLoans() external view returns(Loans[]);\r\n\r\n    // function getExpiredLoans() external view returns(Loans[]);\r\n\r\n    // function buyExpiredLoan (uint loanId,uint price) external;\r\n\r\n    // function toDaiFromEth(uint priceInEth) external view returns(uint priceInDai);\r\n\r\n    // function toEthFromDai(uint priceInDai) extrenal view returns(uint priceInEth);\r\n\r\n\r\n\r\n}",
+  "sourcePath": "C:/Users/osasola/Desktop/js-projects/blockchain/lending/contracts/LendingCore.sol",
+  "ast": {
+    "absolutePath": "/C/Users/osasola/Desktop/js-projects/blockchain/lending/contracts/LendingCore.sol",
+    "exportedSymbols": {
+      "LendingCore": [
+        432
+      ]
+    },
+    "id": 433,
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 430,
+        "literals": [
+          "solidity",
+          "^",
+          "0.6",
+          ".0"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "0:23:4"
+      },
+      {
+        "absolutePath": "@openzeppelin/contracts/token/ERC20/IERC20.sol",
+        "file": "@openzeppelin/contracts/token/ERC20/IERC20.sol",
+        "id": 431,
+        "nodeType": "ImportDirective",
+        "scope": 433,
+        "sourceUnit": 1453,
+        "src": "25:56:4",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "abstract": false,
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "contract",
+        "documentation": null,
+        "fullyImplemented": true,
+        "id": 432,
+        "linearizedBaseContracts": [
+          432
+        ],
+        "name": "LendingCore",
+        "nodeType": "ContractDefinition",
+        "nodes": [],
+        "scope": 433,
+        "src": "85:704:4"
+      }
+    ],
+    "src": "0:789:4"
+  },
+  "legacyAST": {
+    "absolutePath": "/C/Users/osasola/Desktop/js-projects/blockchain/lending/contracts/LendingCore.sol",
+    "exportedSymbols": {
+      "LendingCore": [
+        432
+      ]
+    },
+    "id": 433,
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 430,
+        "literals": [
+          "solidity",
+          "^",
+          "0.6",
+          ".0"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "0:23:4"
+      },
+      {
+        "absolutePath": "@openzeppelin/contracts/token/ERC20/IERC20.sol",
+        "file": "@openzeppelin/contracts/token/ERC20/IERC20.sol",
+        "id": 431,
+        "nodeType": "ImportDirective",
+        "scope": 433,
+        "sourceUnit": 1453,
+        "src": "25:56:4",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "abstract": false,
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "contract",
+        "documentation": null,
+        "fullyImplemented": true,
+        "id": 432,
+        "linearizedBaseContracts": [
+          432
+        ],
+        "name": "LendingCore",
+        "nodeType": "ContractDefinition",
+        "nodes": [],
+        "scope": 433,
+        "src": "85:704:4"
+      }
+    ],
+    "src": "0:789:4"
+  },
+  "compiler": {
+    "name": "solc",
+    "version": "0.6.6+commit.6c089d02.Emscripten.clang"
+  },
+  "networks": {},
+  "schemaVersion": "3.0.22",
+  "updatedAt": "2020-09-21T18:02:37.629Z",
+  "devdoc": {
+    "methods": {}
+  },
+  "userdoc": {
+    "methods": {}
+  }
+}
