@@ -1,0 +1,17 @@
+
+body{
+    // Small devices (landscape phones, 576px and up)
+     @media (max-width: 576px) { 
+     background:red;
+     }
+
+    // Medium devices (tablets, 768px and up)
+    @media (min-width: 768px) {  background:yellow; }
+
+    // Large devices (desktops, 992px and up)
+    @media (min-width: 992px) {   background:purple;}
+
+    // Extra large devices (large desktops, 1200px and up)
+    @media (min-width: 1200px) {   background:green;}
+
+}
