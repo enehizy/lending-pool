@@ -4,15 +4,27 @@ width:100%;
  max-width:700px;
     
 }
-.max-width-300{
+.max-width-500{
     width:100%;
-     max-width:300px;
+     max-width:500px;
         
     }
+    .max-width-600{
+        width:100%;
+         max-width:600px;
+            
+        }
 .button-disabled:disabled{
 opacity:0.3;
 }
-
+.sticky{
+    position:fixed;
+    top:0;
+}
+.hover--shadow--xl:hover {
+  /* box-shadow: 0 10px 15px -3px rgba(0, 156, 196, 0.1), 0 4px 6px -2px rgba(0, 156, 196, 0.05); */
+  box-shadow: 0 20px 25px -5px rgba(2, 38, 71, 0.2), 0 10px 10px -5px rgb(2, 38, 71, 0.32);
+}
 
 
 

@@ -8,26 +8,41 @@ import Borrow from './components/Borrow';
 import {Redirect, Route, Switch} from 'react-router-dom';
 import BuyCollateral from './components/BuyCollateral';
 import DashBoard from './components/DashBoard';
+import ModalState from './globalState/ModalState';
+import LoadingIcon from './components/LoadingIcon';
+import ConnectToTestnet from './components/ConnectToTestnet';
+import TransactionStateProvider from './globalState/TransactionStateProvider';
+import TxLoader from './components/TxLoader';
 export default function App(){
   return(
-    
+    <TransactionStateProvider>
      <div >
+       
+        {/* <p className="shadow-lg p-2 flex justify-center items-center bg-orange-400 text-white">You need to connect to any test network to use this app</p> */}
        <main className="md:flex ">
         <NavBar/>
-        <div className="w-full">
+        <div className="flex-1">
+       
+         {/* <p className="flex bg-blue-700 text-white p-2 justify-center items-center sticky ">Click here to view transactions...</p> */}
+         
          <Header/>
+         {/* <ConnectToTestnet/> */}
+         <TxLoader/>
+         
          <div className="p-5 md:p-10">
+        
          <h1 class="text-l md:text-xl font-bold text-gray-600">Borrow token or Buy Ethereum at a Discounted rate</h1>
           {/* <BuyCollateral/> */}
-          <Switch>
-              <Route exact path="/">
-                <Redirect to="/borrow"/>
-              </Route>
-              <Route  path="/borrow" component={Borrow}/>
-              <Route  path="/buy" component={BuyCollateral}/>
-              <Route  path="/dashboard" component={DashBoard}/>
-          </Switch>
-         
+        
+              <Switch>
+                  <Route exact path="/">
+                    <Redirect to="/borrow"/>
+                  </Route>
+                  <Route  path="/borrow" component={Borrow}/>
+                  <Route  path="/buy" component={BuyCollateral}/>
+                  <Route  path="/dashboard" component={DashBoard}/>
+              </Switch>
+
          
          </div>
         
@@ -39,5 +54,6 @@ export default function App(){
        
  
     </div>
+    </TransactionStateProvider>
   )
 }

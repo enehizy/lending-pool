@@ -8,8 +8,8 @@ import '@openzeppelin/contracts/math/SafeMath.sol';
 import './tokens/BRT.sol';
 import './libraries/SafePercentage.sol';
 import './BRTPOOLUTILS.SOL';
-import './tokens/EtherBackedCollateral.sol';
-contract BRTPOOL is BRTPOOLUTILS ,EtherBackedCollateral{
+import './tokens/CollateralRedemptionToken.sol';
+contract BRTPOOL is BRTPOOLUTILS ,CollateralRedemptionToken{
     address public brtAddr;
     struct BrtTokenInfo{
         uint8 decimals;
@@ -57,26 +57,51 @@ contract BRTPOOL is BRTPOOLUTILS ,EtherBackedCollateral{
          _burn(loanId);
          msg.sender.transfer(_loanInfo.collateral);
     }  
-    function getOutstandingLoansBy(address owner) public view
-    returns(Collateral[] memory)
-    {   
-        require(balanceOf(owner) > 0,'address has no outstanding Loans');
-        Collateral[] memory _loansForAddr = new Collateral[](balanceOf(owner));
-        for(uint i = 0;i < _collaterals.length ; i++){
-          if(ownerOf(i) == owner && !isExpired(i)){
-              _loansForAddr[i] = _collaterals[i];
-          }
+    // function getOutstandingLoansBy(address owner) public view
+    // returns(Collateral[] memory)
+    // {   
+    //     require(balanceOf(owner) > 0,'address has no outstanding Loans');
+    //     Collateral[] memory _loansForAddr = new Collateral[](balanceOf(owner));
+    //     for(uint i = 0;i < _collaterals.length ; i++){
+    //       if(ownerOf(i) == owner && !isExpired(i)){
+    //           _loansForAddr[i] = _collaterals[i];
+    //       }
        
-        }
-        return _loansForAddr;
+    //     }
+    //     return _loansForAddr;
+    // }
+
+    // function getOutstandingLoans() public view
+    // returns(Collateral[] memory)
+    // {
+    //   return getOutstandingLoansBy(msg.sender);
+    // }
+    function getActiveLoans() external view
+    returns(uint[] memory)
+    {  
+       uint[] memory _loans= new uint[](_loanCounter());
+       for(uint i =0;i < _collaterals.length;i++){
+         if(ownerOf(i) == msg.sender && !isExpired(i)){
+            _loans[i]=i;
+         }
+       }
+       return _loans;
     }
 
-    function getOutstandingLoans() public view
-    returns(Collateral[] memory)
+    function _loanCounter() private view
+    returns(uint)
     {
-      return getOutstandingLoansBy(msg.sender);
+       uint _count;
+       for(uint i =0;i < _collaterals.length;i++){
+         if(ownerOf(i) == msg.sender && !isExpired(i)){
+            _count = _count + 1;
+         }
+       }
+       return _count;
+
     }
-    
+
+
     function isExpired(uint loanId) public view
     returns(bool)
     {

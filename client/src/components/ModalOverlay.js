@@ -1,10 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-const Overlay=({children})=>{
+const Overlay=({children,show})=>{
     return(
       
-        <div className="absolute inset-0  bg-black bg-opacity-75 flex md:justify-center  "  >
+        <div className={`absolute inset-0  bg-black bg-opacity-75 flex md:justify-center ${show?null:'hidden'}`}  >
         {children} 
         </div>
 
@@ -12,8 +12,8 @@ const Overlay=({children})=>{
 }
 
 
-export default function ModalOverlay({children}){
+export default function ModalOverlay({children,show}){
     return(
-    ReactDOM.createPortal(<Overlay>{children}</Overlay>,document.getElementById('modals'))
+    ReactDOM.createPortal(<Overlay show={show}>{children}</Overlay>,document.getElementById('modals'))
     )
 }

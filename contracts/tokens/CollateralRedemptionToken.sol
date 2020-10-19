@@ -5,11 +5,9 @@ import '@openzeppelin/contracts/token/ERC721/ERC721.sol';
 
 
 
-//sorry for the confusing name
-//this is an ERC721 token that represents the loan and its parameters ,
-// it is an expiring token that can be used to recliam collateral used to,secure loan
 
-contract EtherBackedCollateral is ERC721{
+
+contract CollateralRedemptionToken is ERC721{
     struct Collateral{
         uint redemptionPrice;
         uint collateral;
@@ -17,7 +15,7 @@ contract EtherBackedCollateral is ERC721{
     }
     Collateral[] internal _collaterals;
     uint internal borrowTime= 2 minutes;
-    constructor() ERC721('Ether Backed Collateral','EBC')public{
+    constructor() ERC721('Collateral Redemption Token','CRT')public{
       
     }
    

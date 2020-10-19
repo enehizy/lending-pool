@@ -1,4 +1,6 @@
 import React,{useEffect, useState}from 'react';
+import LoadingIcon from './LoadingIcon';
+import ModalOverlay from './ModalOverlay';
 import Symbol from './Symbol';
 import TxButtons from './TxButtons';
 import TxDetailsList from './TxDetailsList';
@@ -8,8 +10,9 @@ export default function Burrow(){
     const [loan,setLoan]=useState(0);
     const [collateral,setCollateral]=useState(0);
     const [showModal,setShowModal]=useState(false);
+    const [transactionState,setTransactionState]=useState('overview');
     const closeModal=()=>{
-      setShowModal(false)
+      setShowModal(false);
     }
     useEffect(()=>{
      if(loan < 0){
@@ -21,14 +24,15 @@ export default function Burrow(){
     },[loan,collateral])
     return(
       
-        <div className="space-y-5">
+        <div className="space-y-5 relative">
              
               <div className="md:flex md:items-center md:space-x-10 space-y-2">
               <label>
-            <p className="text-xl"> Loan</p>
-            <input type="number" placeholder="loan amount" className="p-3 border-l rounded" disabled={collateral > 0?true:false} value={loan} onChange={(e)=>{setLoan(e.target.value)}}/>
+            <p className="md:text-xl"> Loan</p>
+            <Symbol symbol="BRT" bgColor="bg-gray-400" padding="p-2 md:p-3 "/>
+            <input type="number" placeholder="loan amount" className=" p-2 md:p-3 border-2 border-dashed rounded" disabled={collateral > 0?true:false} value={loan} onChange={(e)=>{setLoan(e.target.value)}}/>
     
-            <Symbol symbol="BRT" bgColor="bg-gray-400" padding="p-3"/>
+
             </label>
 
             <div className="">
@@ -42,13 +46,14 @@ export default function Burrow(){
 
             
             <label>
-            <p className="text-xl "> Collateral</p>
-            <input type="number" placeholder="collateral amount" className="p-3 border-l" disabled={loan> 0?true:false} value={collateral} onChange={(e)=>{setCollateral(e.target.value)}}/>
-            <Symbol symbol="ETH" bgColor="bg-gray-400" padding="p-3"/>
+            <p className="md:text-xl "> Collateral</p>
+            <Symbol symbol="ETH" bgColor="bg-gray-400" padding="p-2 md:p-3"/>
+            <input type="number" placeholder="collateral amount" className="p-2 md:p-3 border-2 border-dashed" disabled={loan> 0?true:false} value={collateral} onChange={(e)=>{setCollateral(e.target.value)}}/>
+           
            
             </label>
             
-            <div>
+            <div className="">
             <label className="text-xl">Interest Rate</label>
             <p className="text-2xl md:text-3xl font-bold text-green-400">5%</p>
             </div>
@@ -56,30 +61,44 @@ export default function Burrow(){
               </div>
             
              
-             <button className="bg-gray-900 block p-2 rounded text-white rounded button-disabled" onClick={()=>{setShowModal(true)}} disabled={collateral == 0 && loan == 0}>Continue</button>
-        
-             <TxDetailsModal show={showModal} headerTitle="Transaction Overview">
-                 <TxDetailsList>
-                     <TxDetailsListItem title="Loan Amount" state="200 BRT"/>
-                     <TxDetailsListItem title="Interest" state="5%"/>
-                     <TxDetailsListItem title="Collaterization Ratio" state="150%"/>
-                     <TxDetailsListItem title="Collateral Amount" state="200 ETH"/>
-                     <TxDetailsListItem title="Payback price" state="235 BRT"/>
-                     <TxDetailsListItem title="Expires" state="2 minutes"/>
-                 </TxDetailsList>
-                 <TxButtons close={closeModal}>
-                    <button className="border-2 border-solid border-gray-900  text-gray-900 p-2 flex button-disabled" disabled >
-                       Borrow
-                       <svg className="w-6 h-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                       <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
-                       </svg>
-                    </button>
-                    
-                 </TxButtons>
-                 
-                 <h5 className="text-red-600 text-center">Please connect to wallet</h5>
-            </TxDetailsModal>
+             <button className="bg-gray-900  md:block p-2 rounded text-white rounded button-disabled" onClick={()=>{setShowModal(true)}} disabled={collateral == 0 && loan == 0}>Continue</button>
+            
+             <ModalOverlay show={showModal}>
+
           
+                   <TxDetailsModal show={true} headerTitle="Transaction Overview" >
+                  <TxDetailsList>
+                      <TxDetailsListItem title="Loan Amount" state="200 BRT"/>
+                      <TxDetailsListItem title="Interest" state="5%"/>
+                      <TxDetailsListItem title="Collaterization Ratio" state="150%"/>
+                      <TxDetailsListItem title="Collateral Amount" state="200 ETH"/>
+                      <TxDetailsListItem title="Payback price" state="235 BRT"/>
+                      <TxDetailsListItem title="Expires" state="2 minutes"/>
+                  </TxDetailsList>
+                  <TxButtons close={closeModal} pending={true}>
+                  
+                      <button className="border-2 border-solid border-gray-900  text-gray-900 p-2 flex button-disabled" disabled >
+                        Borrow
+                        <svg
+                        className="w-6 h-6"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                        >
+                        <path
+                          fillRule="evenodd"
+                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                          clipRule="evenodd"
+                        ></path>
+                       </svg>
+                      </button>
+                      
+                  </TxButtons>
+                  
+                  <h5 className="text-red-600 text-center">Please connect to wallet</h5>
+              </TxDetailsModal> 
+        
+            </ModalOverlay>
        </div>
        
      )

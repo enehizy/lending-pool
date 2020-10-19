@@ -370,13 +370,26 @@ contract('BrtPool Core',(accounts)=>{
      
   
      it('should get  loans borrowed by address',async()=>{
-       let loans= await brtPool.getOutstandingLoansBy(accounts[0]);
-       assert.equal(typeof loans,typeof [],'return wrong value');
-       const numberOfLoans = loans.length > 0;
-       assert.equal(numberOfLoans,true);
-      
-       
+      let loanId=await brtPool.getActiveLoans();
+      loanId=loanId.map((id)=>{
+       return id.toNumber();
       })
+      assert.equal(loanId[0],0);
+      const loans=[]
+      for(let i=0;i < loanId.length;i++){
+       let info =await  brtPool.loanInfo(loanId[i])
+       info ={
+         loanId:loanId[i],
+         redemptionPrice:info.redemptionPrice,
+         collateral:info.collateral,
+         expires:info.expires
+
+       }
+       loans.push(info);
+      }
+    const numOfLoans=loans.length > 0;
+      assert.equal(numOfLoans,true)
+    })
 
       it('should get expired Loans ids',async()=>{
        try{

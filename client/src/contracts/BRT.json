@@ -294,14 +294,14 @@
     "absolutePath": "/C/Users/osasola/Desktop/js-projects/blockchain/lending/contracts/tokens/BRT.sol",
     "exportedSymbols": {
       "BRT": [
-        1106
+        1125
       ]
     },
-    "id": 1107,
+    "id": 1126,
     "nodeType": "SourceUnit",
     "nodes": [
       {
-        "id": 1080,
+        "id": 1099,
         "literals": [
           "solidity",
           "^",
@@ -314,10 +314,10 @@
       {
         "absolutePath": "@openzeppelin/contracts/token/ERC20/ERC20.sol",
         "file": "@openzeppelin/contracts/token/ERC20/ERC20.sol",
-        "id": 1081,
+        "id": 1100,
         "nodeType": "ImportDirective",
-        "scope": 1107,
-        "sourceUnit": 1965,
+        "scope": 1126,
+        "sourceUnit": 1984,
         "src": "25:55:5",
         "symbolAliases": [],
         "unitAlias": ""
@@ -329,42 +329,42 @@
             "arguments": null,
             "baseName": {
               "contractScope": null,
-              "id": 1082,
+              "id": 1101,
               "name": "ERC20",
               "nodeType": "UserDefinedTypeName",
-              "referencedDeclaration": 1964,
+              "referencedDeclaration": 1983,
               "src": "102:5:5",
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_ERC20_$1964",
+                "typeIdentifier": "t_contract$_ERC20_$1983",
                 "typeString": "contract ERC20"
               }
             },
-            "id": 1083,
+            "id": 1102,
             "nodeType": "InheritanceSpecifier",
             "src": "102:5:5"
           }
         ],
         "contractDependencies": [
-          1193,
-          1964,
-          2042
+          1212,
+          1983,
+          2061
         ],
         "contractKind": "contract",
         "documentation": null,
         "fullyImplemented": true,
-        "id": 1106,
+        "id": 1125,
         "linearizedBaseContracts": [
-          1106,
-          1964,
-          2042,
-          1193
+          1125,
+          1983,
+          2061,
+          1212
         ],
         "name": "BRT",
         "nodeType": "ContractDefinition",
         "nodes": [
           {
             "body": {
-              "id": 1104,
+              "id": 1123,
               "nodeType": "Block",
               "src": "189:63:5",
               "statements": [
@@ -374,11 +374,11 @@
                     "arguments": [
                       {
                         "argumentTypes": null,
-                        "id": 1093,
+                        "id": 1112,
                         "name": "brtPoolAddr",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 1085,
+                        "referencedDeclaration": 1104,
                         "src": "204:11:5",
                         "typeDescriptions": {
                           "typeIdentifier": "t_address",
@@ -391,7 +391,7 @@
                           "typeIdentifier": "t_uint256",
                           "typeString": "uint256"
                         },
-                        "id": 1101,
+                        "id": 1120,
                         "isConstant": false,
                         "isLValue": false,
                         "isPure": true,
@@ -399,7 +399,7 @@
                         "leftExpression": {
                           "argumentTypes": null,
                           "hexValue": "31303030303030303030",
-                          "id": 1094,
+                          "id": 1113,
                           "isConstant": false,
                           "isLValue": false,
                           "isPure": true,
@@ -425,7 +425,7 @@
                                 "typeIdentifier": "t_rational_1000000000000000000_by_1",
                                 "typeString": "int_const 1000000000000000000"
                               },
-                              "id": 1099,
+                              "id": 1118,
                               "isConstant": false,
                               "isLValue": false,
                               "isPure": true,
@@ -433,7 +433,7 @@
                               "leftExpression": {
                                 "argumentTypes": null,
                                 "hexValue": "3130",
-                                "id": 1097,
+                                "id": 1116,
                                 "isConstant": false,
                                 "isLValue": false,
                                 "isPure": true,
@@ -453,7 +453,7 @@
                               "rightExpression": {
                                 "argumentTypes": null,
                                 "hexValue": "3138",
-                                "id": 1098,
+                                "id": 1117,
                                 "isConstant": false,
                                 "isLValue": false,
                                 "isPure": true,
@@ -482,7 +482,7 @@
                                 "typeString": "int_const 1000000000000000000"
                               }
                             ],
-                            "id": 1096,
+                            "id": 1115,
                             "isConstant": false,
                             "isLValue": false,
                             "isPure": true,
@@ -494,7 +494,7 @@
                               "typeString": "type(uint256)"
                             },
                             "typeName": {
-                              "id": 1095,
+                              "id": 1114,
                               "name": "uint",
                               "nodeType": "ElementaryTypeName",
                               "src": "229:4:5",
@@ -504,7 +504,7 @@
                               }
                             }
                           },
-                          "id": 1100,
+                          "id": 1119,
                           "isConstant": false,
                           "isLValue": false,
                           "isPure": true,
@@ -537,18 +537,18 @@
                           "typeString": "uint256"
                         }
                       ],
-                      "id": 1092,
+                      "id": 1111,
                       "name": "_mint",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 1840,
+                      "referencedDeclaration": 1859,
                       "src": "198:5:5",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_internal_nonpayable$_t_address_$_t_uint256_$returns$__$",
                         "typeString": "function (address,uint256)"
                       }
                     },
-                    "id": 1102,
+                    "id": 1121,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
@@ -563,14 +563,14 @@
                       "typeString": "tuple()"
                     }
                   },
-                  "id": 1103,
+                  "id": 1122,
                   "nodeType": "ExpressionStatement",
                   "src": "198:46:5"
                 }
               ]
             },
             "documentation": null,
-            "id": 1105,
+            "id": 1124,
             "implemented": true,
             "kind": "constructor",
             "modifiers": [
@@ -579,7 +579,7 @@
                   {
                     "argumentTypes": null,
                     "hexValue": "426f72726f77656420546f6b656e",
-                    "id": 1088,
+                    "id": 1107,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": true,
@@ -597,7 +597,7 @@
                   {
                     "argumentTypes": null,
                     "hexValue": "425254",
-                    "id": 1089,
+                    "id": 1108,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": true,
@@ -613,17 +613,17 @@
                     "value": "BRT"
                   }
                 ],
-                "id": 1090,
+                "id": 1109,
                 "modifierName": {
                   "argumentTypes": null,
-                  "id": 1087,
+                  "id": 1106,
                   "name": "ERC20",
                   "nodeType": "Identifier",
                   "overloadedDeclarations": [],
-                  "referencedDeclaration": 1964,
+                  "referencedDeclaration": 1983,
                   "src": "160:5:5",
                   "typeDescriptions": {
-                    "typeIdentifier": "t_type$_t_contract$_ERC20_$1964_$",
+                    "typeIdentifier": "t_type$_t_contract$_ERC20_$1983_$",
                     "typeString": "type(contract ERC20)"
                   }
                 },
@@ -635,17 +635,17 @@
             "nodeType": "FunctionDefinition",
             "overrides": null,
             "parameters": {
-              "id": 1086,
+              "id": 1105,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 1085,
+                  "id": 1104,
                   "mutability": "mutable",
                   "name": "brtPoolAddr",
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
-                  "scope": 1105,
+                  "scope": 1124,
                   "src": "132:19:5",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -654,7 +654,7 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 1084,
+                    "id": 1103,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
                     "src": "132:7:5",
@@ -671,19 +671,19 @@
               "src": "131:21:5"
             },
             "returnParameters": {
-              "id": 1091,
+              "id": 1110,
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "189:0:5"
             },
-            "scope": 1106,
+            "scope": 1125,
             "src": "120:132:5",
             "stateMutability": "nonpayable",
             "virtual": false,
             "visibility": "public"
           }
         ],
-        "scope": 1107,
+        "scope": 1126,
         "src": "86:178:5"
       }
     ],
@@ -693,14 +693,14 @@
     "absolutePath": "/C/Users/osasola/Desktop/js-projects/blockchain/lending/contracts/tokens/BRT.sol",
     "exportedSymbols": {
       "BRT": [
-        1106
+        1125
       ]
     },
-    "id": 1107,
+    "id": 1126,
     "nodeType": "SourceUnit",
     "nodes": [
       {
-        "id": 1080,
+        "id": 1099,
         "literals": [
           "solidity",
           "^",
@@ -713,10 +713,10 @@
       {
         "absolutePath": "@openzeppelin/contracts/token/ERC20/ERC20.sol",
         "file": "@openzeppelin/contracts/token/ERC20/ERC20.sol",
-        "id": 1081,
+        "id": 1100,
         "nodeType": "ImportDirective",
-        "scope": 1107,
-        "sourceUnit": 1965,
+        "scope": 1126,
+        "sourceUnit": 1984,
         "src": "25:55:5",
         "symbolAliases": [],
         "unitAlias": ""
@@ -728,42 +728,42 @@
             "arguments": null,
             "baseName": {
               "contractScope": null,
-              "id": 1082,
+              "id": 1101,
               "name": "ERC20",
               "nodeType": "UserDefinedTypeName",
-              "referencedDeclaration": 1964,
+              "referencedDeclaration": 1983,
               "src": "102:5:5",
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_ERC20_$1964",
+                "typeIdentifier": "t_contract$_ERC20_$1983",
                 "typeString": "contract ERC20"
               }
             },
-            "id": 1083,
+            "id": 1102,
             "nodeType": "InheritanceSpecifier",
             "src": "102:5:5"
           }
         ],
         "contractDependencies": [
-          1193,
-          1964,
-          2042
+          1212,
+          1983,
+          2061
         ],
         "contractKind": "contract",
         "documentation": null,
         "fullyImplemented": true,
-        "id": 1106,
+        "id": 1125,
         "linearizedBaseContracts": [
-          1106,
-          1964,
-          2042,
-          1193
+          1125,
+          1983,
+          2061,
+          1212
         ],
         "name": "BRT",
         "nodeType": "ContractDefinition",
         "nodes": [
           {
             "body": {
-              "id": 1104,
+              "id": 1123,
               "nodeType": "Block",
               "src": "189:63:5",
               "statements": [
@@ -773,11 +773,11 @@
                     "arguments": [
                       {
                         "argumentTypes": null,
-                        "id": 1093,
+                        "id": 1112,
                         "name": "brtPoolAddr",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 1085,
+                        "referencedDeclaration": 1104,
                         "src": "204:11:5",
                         "typeDescriptions": {
                           "typeIdentifier": "t_address",
@@ -790,7 +790,7 @@
                           "typeIdentifier": "t_uint256",
                           "typeString": "uint256"
                         },
-                        "id": 1101,
+                        "id": 1120,
                         "isConstant": false,
                         "isLValue": false,
                         "isPure": true,
@@ -798,7 +798,7 @@
                         "leftExpression": {
                           "argumentTypes": null,
                           "hexValue": "31303030303030303030",
-                          "id": 1094,
+                          "id": 1113,
                           "isConstant": false,
                           "isLValue": false,
                           "isPure": true,
@@ -824,7 +824,7 @@
                                 "typeIdentifier": "t_rational_1000000000000000000_by_1",
                                 "typeString": "int_const 1000000000000000000"
                               },
-                              "id": 1099,
+                              "id": 1118,
                               "isConstant": false,
                               "isLValue": false,
                               "isPure": true,
@@ -832,7 +832,7 @@
                               "leftExpression": {
                                 "argumentTypes": null,
                                 "hexValue": "3130",
-                                "id": 1097,
+                                "id": 1116,
                                 "isConstant": false,
                                 "isLValue": false,
                                 "isPure": true,
@@ -852,7 +852,7 @@
                               "rightExpression": {
                                 "argumentTypes": null,
                                 "hexValue": "3138",
-                                "id": 1098,
+                                "id": 1117,
                                 "isConstant": false,
                                 "isLValue": false,
                                 "isPure": true,
@@ -881,7 +881,7 @@
                                 "typeString": "int_const 1000000000000000000"
                               }
                             ],
-                            "id": 1096,
+                            "id": 1115,
                             "isConstant": false,
                             "isLValue": false,
                             "isPure": true,
@@ -893,7 +893,7 @@
                               "typeString": "type(uint256)"
                             },
                             "typeName": {
-                              "id": 1095,
+                              "id": 1114,
                               "name": "uint",
                               "nodeType": "ElementaryTypeName",
                               "src": "229:4:5",
@@ -903,7 +903,7 @@
                               }
                             }
                           },
-                          "id": 1100,
+                          "id": 1119,
                           "isConstant": false,
                           "isLValue": false,
                           "isPure": true,
@@ -936,18 +936,18 @@
                           "typeString": "uint256"
                         }
                       ],
-                      "id": 1092,
+                      "id": 1111,
                       "name": "_mint",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 1840,
+                      "referencedDeclaration": 1859,
                       "src": "198:5:5",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_internal_nonpayable$_t_address_$_t_uint256_$returns$__$",
                         "typeString": "function (address,uint256)"
                       }
                     },
-                    "id": 1102,
+                    "id": 1121,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
@@ -962,14 +962,14 @@
                       "typeString": "tuple()"
                     }
                   },
-                  "id": 1103,
+                  "id": 1122,
                   "nodeType": "ExpressionStatement",
                   "src": "198:46:5"
                 }
               ]
             },
             "documentation": null,
-            "id": 1105,
+            "id": 1124,
             "implemented": true,
             "kind": "constructor",
             "modifiers": [
@@ -978,7 +978,7 @@
                   {
                     "argumentTypes": null,
                     "hexValue": "426f72726f77656420546f6b656e",
-                    "id": 1088,
+                    "id": 1107,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": true,
@@ -996,7 +996,7 @@
                   {
                     "argumentTypes": null,
                     "hexValue": "425254",
-                    "id": 1089,
+                    "id": 1108,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": true,
@@ -1012,17 +1012,17 @@
                     "value": "BRT"
                   }
                 ],
-                "id": 1090,
+                "id": 1109,
                 "modifierName": {
                   "argumentTypes": null,
-                  "id": 1087,
+                  "id": 1106,
                   "name": "ERC20",
                   "nodeType": "Identifier",
                   "overloadedDeclarations": [],
-                  "referencedDeclaration": 1964,
+                  "referencedDeclaration": 1983,
                   "src": "160:5:5",
                   "typeDescriptions": {
-                    "typeIdentifier": "t_type$_t_contract$_ERC20_$1964_$",
+                    "typeIdentifier": "t_type$_t_contract$_ERC20_$1983_$",
                     "typeString": "type(contract ERC20)"
                   }
                 },
@@ -1034,17 +1034,17 @@
             "nodeType": "FunctionDefinition",
             "overrides": null,
             "parameters": {
-              "id": 1086,
+              "id": 1105,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 1085,
+                  "id": 1104,
                   "mutability": "mutable",
                   "name": "brtPoolAddr",
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
-                  "scope": 1105,
+                  "scope": 1124,
                   "src": "132:19:5",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -1053,7 +1053,7 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 1084,
+                    "id": 1103,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
                     "src": "132:7:5",
@@ -1070,19 +1070,19 @@
               "src": "131:21:5"
             },
             "returnParameters": {
-              "id": 1091,
+              "id": 1110,
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "189:0:5"
             },
-            "scope": 1106,
+            "scope": 1125,
             "src": "120:132:5",
             "stateMutability": "nonpayable",
             "virtual": false,
             "visibility": "public"
           }
         ],
-        "scope": 1107,
+        "scope": 1126,
         "src": "86:178:5"
       }
     ],
@@ -1094,7 +1094,7 @@
   },
   "networks": {},
   "schemaVersion": "3.0.22",
-  "updatedAt": "2020-09-30T06:11:09.430Z",
+  "updatedAt": "2020-10-13T17:53:16.428Z",
   "devdoc": {
     "methods": {
       "allowance(address,address)": {
