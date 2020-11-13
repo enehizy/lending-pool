@@ -61,7 +61,7 @@ export default function CollateralCard({collateral,discount,marketPrice,soldAt})
                         
                     </TxButtons>
                     
-                    <h5 className="text-red-600 text-center">Please connect to wallet</h5>
+                   
                 </TxDetailsModal>
             </ModalOverlay>
              </>

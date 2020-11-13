@@ -4,6 +4,7 @@ import './libraries/SafePercentage.sol';
 contract BRTPOOLUTILS{
      uint8 internal _ethBrtExchangeRate =125;
      uint8 public collaterizationRatio =150;
+     uint8 public feePercent=5;
      using SafeMath for uint;
      using SafePercentage for uint;
 
@@ -39,5 +40,6 @@ contract BRTPOOLUTILS{
         return loan;
 
     }
+
 
 }

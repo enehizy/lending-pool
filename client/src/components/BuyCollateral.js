@@ -1,17 +1,57 @@
-import React,{useState} from 'react';
+import React,{useState,useEffect} from 'react';
 import CollateralCard from './CollateralCard';
 import CollaterallListTitle from './CollateralListTitle';
-import EtherIcon from './EtherIcon';
-import Symbol from './Symbol';
-import InputRange from 'react-input-range';
+import BrtPool from '../contracts/BrtPool';
+
+import LoadingCard from './LoadingCard';
+import { useWalletContext } from '../hooks';
+import NothingFound from './NothingFound';
  export default function BuyCollateral(){
-     const {value,setValue}=useState(1)
+    
+    //  const [loading,setLoading]=useState(false);
+     const [loading,setLoading]=useState(true);
+     const [loans,setLoans]=useState([]);
+     const {selectedAccount}=useWalletContext();
+     useEffect(()=>{
+     (async ()=>{
+      if(selectedAccount){
+         
+          const contract = new BrtPool();
+          // await contract.borrow({from:selectedAccount,value: 1.2 * (10 ** 18)})
+          const exLoan= await contract.getExpiredLoanIds()
+          if(exLoan.length >= 1){
+            setLoans(exLoan);
+
+          }
+          setLoading(false);
+
+
+         
+     
+       
+      }
+
+
+     })()
+
+
+     },[selectedAccount])
+
+  if(loading){
+    return(
+      <LoadingCard/>  
+    )
+  }
+  else{
      return(
-         <div className="">
-        
+         <>
+         
        
              {/* <button className="border-solid ">Filter</button> */}
              {/* <input type="range"/> */}
+
+             {loans.length >= 1?
+             <>
              <div className="space-x-2">
                 
              <label >
@@ -29,18 +69,23 @@ import InputRange from 'react-input-range';
              <button className="bg-red-700 p-1 text-white">filter</button>
              </div>
              <CollaterallListTitle/>
-        
-             <CollateralCard collateral="200" discount="5" marketPrice="500" soldAt="200"/>
-             <CollateralCard collateral="200" discount="5" marketPrice="500" soldAt="200"/>
-             <CollateralCard collateral="200" discount="5" marketPrice="500" soldAt="200"/>
-             <CollateralCard collateral="200" discount="5" marketPrice="500" soldAt="200"/>
-             
-                
+              {loans.map((loan,index)=>(
+                <CollateralCard key={index} collateral={loan.collateral} discount="5" marketPrice="..." soldAt={loan.redemptionPrice} expires={loan.expires}/>
+              ))}
             
+            </>
              
-       
+             :
+           <NothingFound text="There are no Collaterals to Purchase"/>
+             }
 
 
-         </div>
+             
+           
+
+             
+
+         </>
      )
+    }
  }

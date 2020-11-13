@@ -7,7 +7,7 @@ export default function TxLoader() {
     if(txState !== ''){
         return (
             <div className="flex justify-left items-center space-x-2 "> 
-        <div className="flex p-2 shadow-lg bg-gray-700 text-white "><LoadingIcon/>{txState}</div><p className="border-2 border-gray-900 p-1">3 Transactions
+        <div className="flex p-2 shadow-lg bg-gray-700 text-white rounded"><LoadingIcon/>{txState}</div><p className="border-2 border-gray-900 p-1 rounded">3 Transactions
         <svg
       xmlns="http://www.w3.org/2000/svg"
       fill="none"

@@ -1,4 +1,5 @@
-import React,{useEffect, useState}from 'react';
+import React,{useEffect, useState,useRef}from 'react';
+import { useWalletContext } from '../hooks';
 import LoadingIcon from './LoadingIcon';
 import ModalOverlay from './ModalOverlay';
 import Symbol from './Symbol';
@@ -6,22 +7,88 @@ import TxButtons from './TxButtons';
 import TxDetailsList from './TxDetailsList';
 import TxDetailsListItem from './TxDetailsListItem';
 import TxDetailsModal from './TxDetailsModal';
+import BrtPool from '../contracts/BrtPool';
+
 export default function Burrow(){
-    const [loan,setLoan]=useState(0);
-    const [collateral,setCollateral]=useState(0);
+    // const [loan,setLoan]=useState(0);
+    // const [collateral,setCollateral]=useState(0);
+    const loan=useRef();
+    const collateral=useRef();
     const [showModal,setShowModal]=useState(false);
-    const [transactionState,setTransactionState]=useState('overview');
+    const {web3,selectedNetwork}=useWalletContext();
+    const [fetching,setFetching]=useState(false);
+    const [info,setInfo]=useState({
+      loan:"",
+      borrowTime:"",
+      collateral:""
+    });
     const closeModal=()=>{
       setShowModal(false);
     }
-    useEffect(()=>{
-     if(loan < 0){
-       setLoan(0);
-     }
-     if(collateral < 0){
-       setCollateral(0)
-     }
-    },[loan,collateral])
+
+    const changeCollateral=async()=>{
+      const ln=loan.current.value
+      if(ln > 0 && `${ln}`.length > 0){
+          const contract= new BrtPool();
+          setFetching(true)
+          const col=await  contract.calculateCollateral(ln);
+          const borrowTime=await contract.borrowTime();
+          const data={
+            loan:ln,
+            collateral:col  /(10 ** 18),
+            borrowTime
+          }
+         
+         
+          collateral.current.value = col /(10 ** 18);
+          setFetching(false)
+          setInfo(data);
+       
+
+      }
+      else{
+        collateral.current.value =0;
+        setInfo({
+          loan:"",
+          borrowTime:"",
+          collateral:""
+        })
+      }
+     
+     
+    }
+
+    const changeLoan=async()=>{
+      const col=collateral.current.value;
+      if(col > 0 && `${col}`.length){
+          const contract= new BrtPool();
+          setFetching(true)
+        
+          const ln=await  contract.calculateLoan(col);
+          const borrowTime=await contract.borrowTime();
+          const data={
+            loan:ln / (10 ** 18),
+            borrowTime,
+            collateral:col
+          }
+          loan.current.value=ln /(10 ** 18);
+          setFetching(false)
+          setInfo(data);
+
+      }
+      else{
+        loan.current.value =0;
+        setInfo({
+          loan:"",
+          borrowTime:"",
+          collateral:""
+        })
+      }
+      
+     
+     
+    }
+
     return(
       
         <div className="space-y-5 relative">
@@ -30,7 +97,7 @@ export default function Burrow(){
               <label>
             <p className="md:text-xl"> Loan</p>
             <Symbol symbol="BRT" bgColor="bg-gray-400" padding="p-2 md:p-3 "/>
-            <input type="number" placeholder="loan amount" className=" p-2 md:p-3 border-2 border-dashed rounded" disabled={collateral > 0?true:false} value={loan} onChange={(e)=>{setLoan(e.target.value)}}/>
+            <input type="number" min="0" ref={loan} placeholder="loan amount" className=" p-2 md:p-3 border-2 border-dashed rounded text-gray-900" disabled={selectedNetwork ==1} onChange={()=>{changeCollateral()}}/>
     
 
             </label>
@@ -48,7 +115,7 @@ export default function Burrow(){
             <label>
             <p className="md:text-xl "> Collateral</p>
             <Symbol symbol="ETH" bgColor="bg-gray-400" padding="p-2 md:p-3"/>
-            <input type="number" placeholder="collateral amount" className="p-2 md:p-3 border-2 border-dashed" disabled={loan> 0?true:false} value={collateral} onChange={(e)=>{setCollateral(e.target.value)}}/>
+            <input type="number" min="0" ref={collateral} placeholder="collateral amount" className="p-2 md:p-3 border-2 border-dashed text-gary-900" disabled={selectedNetwork ==1} onChange={()=>{changeLoan()}}/>
            
            
             </label>
@@ -59,21 +126,24 @@ export default function Burrow(){
             </div>
            
               </div>
+             {fetching?"please wait...":null}
             
-             
-             <button className="bg-gray-900  md:block p-2 rounded text-white rounded button-disabled" onClick={()=>{setShowModal(true)}} disabled={collateral == 0 && loan == 0}>Continue</button>
+             {selectedNetwork != 1?
+              <button className="bg-gray-900  md:block p-2 rounded text-white  button-disabled" disabled={info.loan == ""} onClick={()=>{setShowModal(true)}} >Continue</button>
+              :<></>
+             }
+            
             
              <ModalOverlay show={showModal}>
 
           
                    <TxDetailsModal show={true} headerTitle="Transaction Overview" >
                   <TxDetailsList>
-                      <TxDetailsListItem title="Loan Amount" state="200 BRT"/>
+                      <TxDetailsListItem title="Loan Amount" state={`${info.loan} BRT`}/>
                       <TxDetailsListItem title="Interest" state="5%"/>
                       <TxDetailsListItem title="Collaterization Ratio" state="150%"/>
-                      <TxDetailsListItem title="Collateral Amount" state="200 ETH"/>
-                      <TxDetailsListItem title="Payback price" state="235 BRT"/>
-                      <TxDetailsListItem title="Expires" state="2 minutes"/>
+                      <TxDetailsListItem title="Collateral Amount" state={`${info.collateral} ETH`}/>
+                      <TxDetailsListItem title="Expires" state={`${info.borrowTime} seconds`}/>
                   </TxDetailsList>
                   <TxButtons close={closeModal} pending={true}>
                   
@@ -95,7 +165,7 @@ export default function Burrow(){
                       
                   </TxButtons>
                   
-                  <h5 className="text-red-600 text-center">Please connect to wallet</h5>
+                 
               </TxDetailsModal> 
         
             </ModalOverlay>

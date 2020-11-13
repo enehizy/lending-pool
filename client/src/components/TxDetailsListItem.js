@@ -4,7 +4,7 @@ export default function TxDetailsListItem({title,state}){
     return(
         <li>
           <label className="text-base md:text-xl font-bold">{title}</label>
-          <p className="font-hairline ">{state}</p>
+          <p className="font-semibold ">{state}</p>
         </li>
     )
 }

@@ -1,8 +1,11 @@
 import React from 'react';
+import { useWalletContext } from '../hooks';
 import LoadingIcon from './LoadingIcon';
 
 export default function TxButtons({close,children,pending}){
+    const {selectedAccount} =useWalletContext();
     return(
+        <>
         <div className="buttons flex justify-center space-x-2 items-center">
              
         <button className="bg-gray-900  text-white p-2 flex "  onClick={()=>{close()}}>
@@ -12,8 +15,11 @@ export default function TxButtons({close,children,pending}){
         Close
         </button>
          {children}
+        
 
+        </div> 
+        {!selectedAccount?<h5 className="text-red-600 text-center">Please connect to wallet</h5>:<></>} 
 
-        </div>  
+        </>
     )
 }

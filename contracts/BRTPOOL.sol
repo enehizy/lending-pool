@@ -1,7 +1,3 @@
-// https://rinkeby.etherscan.io/address/0x695E0CBFc5765CC01699A081827ef5c39aA0B5dB
-// https://ropsten.etherscan.io/address/0x0c893Cd203DfCbD54426A5A530A57e08eEC24918
-// https://kovan.etherscan.io/address/0x695E0CBFc5765CC01699A081827ef5c39aA0B5dB
-// https://goerli.etherscan.io/address/0x11facd2747Ded4ac1D1aC2134f52d428a0A71648
 pragma solidity ^0.6.0;
 pragma experimental ABIEncoderV2;
 import '@openzeppelin/contracts/math/SafeMath.sol';
@@ -35,19 +31,22 @@ contract BRTPOOL is BRTPOOLUTILS ,CollateralRedemptionToken{
     {
         uint loan = calculateLoan(msg.value);
         require(loan < getPoolBalance(),'cant borrow more than pool liquidity');
+        uint fee=loan.percentMul(feePercent);
+        uint redemptionPrice =loan.add(fee);
+        uint expires=borrowTime.add(block.timestamp);
+
         BRT brtToken=BRT(brtAddr);
         brtToken.transfer(msg.sender,loan); 
-        uint fee=loan.percentMul(5);
-        uint redemptionPrice =loan.add(fee);
-        uint id = _issueCollateralToken(redemptionPrice, msg.value, borrowTime.add(block.timestamp));
-        emit Borrowed(msg.sender,id,redemptionPrice,msg.value,borrowTime.add(block.timestamp));
+        uint id = _issueCollateralToken(redemptionPrice, msg.value, expires);
+        emit Borrowed(msg.sender,id,redemptionPrice,msg.value,expires);
     }
 
-  
+//   1603910689
 
+   
     function payback(uint loanId) external{
          require(_isApprovedOrOwner(msg.sender, loanId),'Error collateral doesnt belong to this address');
-         require(!isExpired(loanId),'Error cant payback expired loan');
+         require(!isLoanExpiredAt(loanId,block.timestamp),'Error:loan has expired');
          require(balanceOf(msg.sender) >= 1,'you do not have any exiting loan');
          require(_exists(loanId),'Error: loan id does not exist');
          BRT brtToken=BRT(brtAddr);
@@ -56,44 +55,34 @@ contract BRTPOOL is BRTPOOLUTILS ,CollateralRedemptionToken{
          delete _collaterals[loanId];
          _burn(loanId);
          msg.sender.transfer(_loanInfo.collateral);
+         
     }  
-    // function getOutstandingLoansBy(address owner) public view
-    // returns(Collateral[] memory)
-    // {   
-    //     require(balanceOf(owner) > 0,'address has no outstanding Loans');
-    //     Collateral[] memory _loansForAddr = new Collateral[](balanceOf(owner));
-    //     for(uint i = 0;i < _collaterals.length ; i++){
-    //       if(ownerOf(i) == owner && !isExpired(i)){
-    //           _loansForAddr[i] = _collaterals[i];
-    //       }
-       
-    //     }
-    //     return _loansForAddr;
-    // }
 
-    // function getOutstandingLoans() public view
-    // returns(Collateral[] memory)
-    // {
-    //   return getOutstandingLoansBy(msg.sender);
-    // }
-    function getActiveLoans() external view
+
+
+    function getActiveLoans(uint unixTimeStamp) external view
     returns(uint[] memory)
     {  
-       uint[] memory _loans= new uint[](_loanCounter());
-       for(uint i =0;i < _collaterals.length;i++){
-         if(ownerOf(i) == msg.sender && !isExpired(i)){
+     
+      
+       if(_loanCounter(unixTimeStamp) >= 1){
+        uint[] memory _loans= new uint[](_loanCounter(unixTimeStamp));
+         for(uint i =0;i < _collaterals.length;i++){
+         if(ownerOf(i) == msg.sender && isLoanExpiredAt(i,unixTimeStamp) == false){
             _loans[i]=i;
          }
        }
        return _loans;
+       }
+       
     }
 
-    function _loanCounter() private view
+    function _loanCounter(uint unixTimeStamp) private view
     returns(uint)
     {
        uint _count;
        for(uint i =0;i < _collaterals.length;i++){
-         if(ownerOf(i) == msg.sender && !isExpired(i)){
+         if(ownerOf(i) == msg.sender && isLoanExpiredAt(i,unixTimeStamp) == false){
             _count = _count + 1;
          }
        }
@@ -102,25 +91,28 @@ contract BRTPOOL is BRTPOOLUTILS ,CollateralRedemptionToken{
     }
 
 
-    function isExpired(uint loanId) public view
+    function isLoanExpiredAt(uint loanId,uint unixTimeStamp) public view
     returns(bool)
-    {
+    {  
+       
        require(loanId < _collaterals.length,'Error: invalid loan id');
-       require(_collaterals[loanId].expires != 0,'Error: collateral does not exist');
+    //    require(_collaterals[loanId].expires != 0,'Error: collateral does not exist');
        require(_exists(loanId),'Error: loan id does not exist');
-
-       return block.timestamp > _collaterals[loanId].expires  ? true:false;
+       return unixTimeStamp  >=  _collaterals[loanId].expires;
 
     }
+
+    
+
      
 
-    function isAnyExpired(uint[] memory _loanIds) public view
+    function isAnyExpired(uint[] memory _loanIds,uint unixTimeStamp) public view
     returns(bool)
     { 
       require(_loanIds.length <= _collaterals.length,'Error: number of id parameters exceeds number of collaterals');
       bool _isExpired;
       for(uint i =0;i < _loanIds.length;i++){
-          if(isExpired(_loanIds[i])){
+          if(isLoanExpiredAt(_loanIds[i],unixTimeStamp)){
               _isExpired =true;
               break;
           }
@@ -128,25 +120,31 @@ contract BRTPOOL is BRTPOOLUTILS ,CollateralRedemptionToken{
       return _isExpired;
     } 
 
-    function getExpiredLoanIds() public view
+    function getExpiredLoanIds(uint unitTimeStamp) public view
     returns(uint[] memory)
     {
-       uint _numberOfExpiredLoans =_expiredLoanCounter();
-       require(_numberOfExpiredLoans > 1,'Error No Expired loans found');
-       uint[] memory _expiredLoanIds = new uint[](_numberOfExpiredLoans);
-       for(uint i = 0; i < _collaterals.length; i++){
-           if(isExpired(i)){
+       uint _numberOfExpiredLoans =_expiredLoanCounter(unitTimeStamp);
+       if( _numberOfExpiredLoans >= 1){
+         uint[] memory _expiredLoanIds = new uint[](_numberOfExpiredLoans);
+                 for(uint i = 0; i < _collaterals.length; i++){
+           if(isLoanExpiredAt(i,unixTimeStamp) == false){
              _expiredLoanIds[i] = i;
            }
        }
        return _expiredLoanIds;
+
+       }
+       
+    //    require(_numberOfExpiredLoans >= 1,'Error No Expired loans found');
+      
+
     }
    
 
    function liquidate(uint loanId) external {
        require(_exists(loanId),'Error cant liqudate loan that does not exist');
        address _previousOwner=ownerOf(loanId);
-       require(isExpired(loanId),'Error: loan has not expired');
+       require(isLoanExpiredAt(loanId,block.timestamp),'Error: loan has not expired');
       
      
        BRT brtToken =BRT(brtAddr);
@@ -154,6 +152,7 @@ contract BRTPOOL is BRTPOOLUTILS ,CollateralRedemptionToken{
        brtToken.transferFrom(msg.sender,address(this),_loanInfo.redemptionPrice);
        delete _collaterals[loanId];
        _burn(loanId);
+   
        msg.sender.transfer(_loanInfo.collateral);
        emit Liquidated(_previousOwner,loanId);
    }
@@ -174,13 +173,13 @@ contract BRTPOOL is BRTPOOLUTILS ,CollateralRedemptionToken{
         return brtToken.balanceOf(address(this));
     }
     
-     function _expiredLoanCounter() internal view
+     function _expiredLoanCounter(uint unixTimeStamp) internal view
     returns(uint)
     {
         uint _count;
         for(uint i = 0; i < _collaterals.length; i++){
-           if(isExpired(i) && _exists(i)){
-             _count =_count +1;
+           if(isLoanExpiredAt(i,unixTimeStamp) == true){
+             _count= _count + 1;
            }
         }
        return _count;
@@ -212,7 +211,7 @@ contract BRTPOOL is BRTPOOLUTILS ,CollateralRedemptionToken{
     //  CUSTOM ERC20 IMPLEMETATION THAT PREVENTS TRANSFER AND APPROVAL OF EXPIRED LOAN
 
      function approve(address to, uint256 tokenId) public virtual override {
-        require(!isExpired(tokenId),'Error: cant approve expired collateral for transfer');
+        require(!isLoanExpiredAt(tokenId,block.timestamp),'Error: cant approve expired collateral for transfer');
         address owner = ownerOf(tokenId);
         require(to != owner, "ERC721: approval to current owner");
 
@@ -221,27 +220,30 @@ contract BRTPOOL is BRTPOOLUTILS ,CollateralRedemptionToken{
         );
 
         _approve(to, tokenId);
+       
     }
     function transferFrom(address from, address to, uint256 tokenId) public virtual override {
-        require(!isExpired(tokenId),'Error: cant transfer expired collateral');
+        require(!isLoanExpiredAt(tokenId,block.timestamp),'Error: cant transfer expired collateral');
         //solhint-disable-next-line max-line-length
         require(_isApprovedOrOwner(_msgSender(), tokenId), "ERC721: transfer caller is not owner nor approved");
 
         _transfer(from, to, tokenId);
+       
     }
      function safeTransferFrom(address from, address to, uint256 tokenId) public virtual override {
-        require(!isExpired(tokenId),'Error: cant transfer expired collateral');
+        require(!isLoanExpiredAt(tokenId,block.timestamp),'Error: cant transfer expired collateral');
         safeTransferFrom(from, to, tokenId, "");
+    
     }
 
     /**
      * @dev See {IERC721-safeTransferFrom}.
      */
     function safeTransferFrom(address from, address to, uint256 tokenId, bytes memory _data) public virtual override{
-        require(!isExpired(tokenId),'Error: cant transfer expired collateral for ');
+        require(!isLoanExpiredAt(tokenId,block.timestamp),'Error: cant transfer expired collateral for ');
         require(_isApprovedOrOwner(_msgSender(), tokenId), "ERC721: transfer caller is not owner nor approved");
         _safeTransfer(from, to, tokenId, _data);
-    }
+        
     
    
 

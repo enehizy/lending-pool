@@ -4,7 +4,7 @@ import ReactDOM from 'react-dom';
 const Overlay=({children,show})=>{
     return(
       
-        <div className={`absolute inset-0  bg-black bg-opacity-75 flex md:justify-center ${show?null:'hidden'}`}  >
+        <div className={`absolute inset-0  bg-gray-900 bg-opacity-75 flex md:justify-center ${show?null:'hidden'}`}  >
         {children} 
         </div>
 

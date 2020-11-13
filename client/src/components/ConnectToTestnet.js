@@ -1,7 +1,25 @@
 import React from 'react'
-
-export default function ConnectToTestnet() {
-    return (
-        <p className=" p-1 flex justify-center items-center bg-orange-400 text-white border-solid">You are connected to the mainnet, connect to any testnet to use dapp</p>
+import { useWalletContext } from '../hooks'
+const ErrorDiv=({message})=>{
+    return(
+    <p className=" p-1 md:p-2 flex max-width-300 items-center border-solid bg-orange-500 text-white uppercase font-mono">
+     {message}
+     </p>   
     )
+}
+
+
+export default function ConnectWarning() {
+    const {selectedAccount,selectedNetwork}=useWalletContext()
+    if(!selectedAccount){
+        return (
+        <ErrorDiv message="please connect to wallet"/>
+        )
+    }
+    else{
+        return(<>
+         {selectedNetwork ==1?<ErrorDiv message="This is a side project ,connect to any testnet to use "/>:<></>}
+        </>)
+    }
+    
 }

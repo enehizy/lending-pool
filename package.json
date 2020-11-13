@@ -8,8 +8,7 @@
     "@truffle/hdwallet-provider": "^1.1.0",
     "dotenv": "^8.2.0"
   },
-  "scripts":{
-    "start":"cd client && yarn start"
+  "scripts": {
+    "start": "cd client && yarn start"
   }
-
 }
