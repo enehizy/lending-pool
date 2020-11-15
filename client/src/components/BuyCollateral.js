@@ -18,10 +18,11 @@ import NothingFound from './NothingFound';
          
           const contract = new BrtPool();
           // await contract.borrow({from:selectedAccount,value: 1.2 * (10 ** 18)})
-          const exLoan= await contract.getExpiredLoanIds()
-          if(exLoan.length >= 1){
-            setLoans(exLoan);
-
+         const exLoans= await contract._getExpiredLoans();
+          if(exLoans.length >= 1){
+            setLoans(exLoans);
+            console.log(exLoans);
+            
           }
           setLoading(false);
 
@@ -52,25 +53,10 @@ import NothingFound from './NothingFound';
 
              {loans.length >= 1?
              <>
-             <div className="space-x-2">
-                
-             <label >
-                from:
-                 <input type="number" className="p-1 border-2"/>
-             </label>
-             <label >
-            to:
-               <input type="number" className="p-1 border-2"/>
-             </label>
-             <select className="p-1 border-2 border-gray-900 rounded">
-                     <option >ETH</option>
-                     <option >BRT</option>
-             </select>
-             <button className="bg-red-700 p-1 text-white">filter</button>
-             </div>
+             <p>percentage filter goes here..</p>
              <CollaterallListTitle/>
-              {loans.map((loan,index)=>(
-                <CollateralCard key={index} collateral={loan.collateral} discount="5" marketPrice="..." soldAt={loan.redemptionPrice} expires={loan.expires}/>
+              {loans.map((loan)=>(
+                <CollateralCard key={loan.id} id={loan.id} collateral={loan.collateral / (10 ** 18)} discount={100 - ((loan.redemptionPrice / loan.marketPrice) * 100)} marketPrice={loan.marketPrice / (10 ** 18)} soldAt={loan.redemptionPrice / (10 ** 18)} expires={loan.expires}/>
               ))}
             
             </>

@@ -14,7 +14,7 @@ contract CollateralRedemptionToken is ERC721{
         uint expires;
     }
     Collateral[] internal _collaterals;
-    uint public borrowTime= 1 minutes;
+    uint public borrowTime= 60 seconds;
     constructor() ERC721('Collateral Redemption Token','CRT')public{
 
     }

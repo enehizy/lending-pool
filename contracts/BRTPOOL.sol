@@ -60,20 +60,23 @@ contract BRTPOOL is BRTPOOLUTILS ,CollateralRedemptionToken{
 
 
 
-    function getActiveLoans(uint unixTimeStamp) external view
+    function getActiveLoans(address addr,uint unixTimeStamp) external view
     returns(uint[] memory)
     {  
      
-      
+       uint[] memory _loans= new uint[](_loanCounter(unixTimeStamp));
        if(_loanCounter(unixTimeStamp) >= 1){
-        uint[] memory _loans= new uint[](_loanCounter(unixTimeStamp));
+
          for(uint i =0;i < _collaterals.length;i++){
-         if(ownerOf(i) == msg.sender && isLoanExpiredAt(i,unixTimeStamp) == false){
+         if(ownerOf(i) == addr && isLoanExpiredAt(i,unixTimeStamp) == false){
             _loans[i]=i;
          }
+
+                }
+     
+
        }
-       return _loans;
-       }
+        return _loans;
        
     }
 
@@ -120,14 +123,14 @@ contract BRTPOOL is BRTPOOLUTILS ,CollateralRedemptionToken{
       return _isExpired;
     } 
 
-    function getExpiredLoanIds(uint unitTimeStamp) public view
+    function getExpiredLoanIds(uint unixTimeStamp) public view
     returns(uint[] memory)
     {
-       uint _numberOfExpiredLoans =_expiredLoanCounter(unitTimeStamp);
+       uint _numberOfExpiredLoans =_expiredLoanCounter(unixTimeStamp);
        if( _numberOfExpiredLoans >= 1){
          uint[] memory _expiredLoanIds = new uint[](_numberOfExpiredLoans);
                  for(uint i = 0; i < _collaterals.length; i++){
-           if(isLoanExpiredAt(i,unixTimeStamp) == false){
+           if(isLoanExpiredAt(i,unixTimeStamp) == true){
              _expiredLoanIds[i] = i;
            }
        }
@@ -243,8 +246,9 @@ contract BRTPOOL is BRTPOOLUTILS ,CollateralRedemptionToken{
         require(!isLoanExpiredAt(tokenId,block.timestamp),'Error: cant transfer expired collateral for ');
         require(_isApprovedOrOwner(_msgSender(), tokenId), "ERC721: transfer caller is not owner nor approved");
         _safeTransfer(from, to, tokenId, _data);
-        
-    
+
+
+    }
    
 
     

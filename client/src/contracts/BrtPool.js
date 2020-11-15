@@ -73,10 +73,7 @@ export default class BrtPool{
         await this.getContract();
         await this.contract.methods.borrow().send({...options});
     }
-    async time(){
-        await this.getContract();
-        await this.contract.methods.time().call();
-    }
+
 
     async approveBrtToken(addr,id,options){
         await this.getContract();
@@ -91,11 +88,12 @@ export default class BrtPool{
         await this.contract.methods.payback(loanId).send({...options});
     }  
 
-    async getActiveLoans(options) 
+    async getActiveLoans(addr) 
  
     {  
         await this.getContract();
-        const activeLoans=  await this.contract.methods.getActiveLoans().call({...options});
+        const time =Math.round(Date.now() /1000);
+        const activeLoans=  await this.contract.methods.getActiveLoans(addr,time).call();
         return activeLoans;
     }
     
@@ -103,7 +101,8 @@ export default class BrtPool{
     async getExpiredLoanIds(options)
     { 
         await this.getContract();
-        const expiredLoans=  await this.contract.methods.getExpiredLoanIds().call({...options});
+        const time =Math.round(Date.now() /1000);
+        const expiredLoans=  await this.contract.methods.getExpiredLoanIds(time).call({...options});
         return expiredLoans;
 
     }
@@ -136,7 +135,8 @@ export default class BrtPool{
     }
     async isExpired(loanId){
         await this.getContract();
-        const expired=  await this.contract.methods.isExpired(loanId).call();
+        const time =Math.round(Date.now() /1000);
+        const expired=  await this.contract.methods.isExpired(loanId,time).call();
         console.log(expired)
     }
 
@@ -151,9 +151,10 @@ export default class BrtPool{
         )
         return values;
     }
-    async _getActiveLoans(){
+    async _getActiveLoans(addr){
         await this.getContract();
-        const acLoans=await this.getActiveLoans()
+        const acLoans=await this.getActiveLoans(addr);
+        console.log({acLoans})
         const activeLoans=[];
         
         for(let i=0;i < acLoans.length;i++){
@@ -167,6 +168,28 @@ export default class BrtPool{
 
         }
         return activeLoans;
+
+    }
+
+    async _getExpiredLoans(){
+        await this.getContract();
+        const exLoan= await this.getExpiredLoanIds();
+        let loan;
+        let marketPrice;
+        const loans =[];
+        for(let i=0;i< exLoan.length;i++){
+            loan =await this.loanInfo(exLoan[i])
+
+            marketPrice = await this.convertToBrtFromEth(loan.collateral / (10 ** 18))
+            loans.push({
+                id:exLoan[i],
+                collateral:loan.collateral,
+                redemptionPrice:loan.redemptionPrice,
+                marketPrice,
+                expires:loan.expires
+            })
+        }
+       return loans;
 
     }
 

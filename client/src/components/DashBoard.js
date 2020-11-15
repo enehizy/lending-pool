@@ -19,7 +19,7 @@ export default function DashBoard(){
                 // await contract.borrow({from:selectedAccount,value: 1.2 * (10 ** 18)})
                 // await contract.isExpired(0);
 
-                const info=await contract._getActiveLoans();
+                const info=await contract._getActiveLoans(selectedAccount);
                 if(info.length >=1){
                     setLoans(info);
                 }

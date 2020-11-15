@@ -1,5 +1,5 @@
 import React,{useEffect, useState,useRef}from 'react';
-import { useWalletContext } from '../hooks';
+import { useWalletContext ,useTransactionState} from '../hooks';
 import LoadingIcon from './LoadingIcon';
 import ModalOverlay from './ModalOverlay';
 import Symbol from './Symbol';
@@ -8,6 +8,7 @@ import TxDetailsList from './TxDetailsList';
 import TxDetailsListItem from './TxDetailsListItem';
 import TxDetailsModal from './TxDetailsModal';
 import BrtPool from '../contracts/BrtPool';
+import WaitingForWallet from './WaitingForWallet';
 
 export default function Burrow(){
     // const [loan,setLoan]=useState(0);
@@ -15,8 +16,10 @@ export default function Burrow(){
     const loan=useRef();
     const collateral=useRef();
     const [showModal,setShowModal]=useState(false);
-    const {web3,selectedNetwork}=useWalletContext();
+    const [waitingForWallet,setWaitingForWallet]=useState(false);
+    const {web3,selectedNetwork,selectedAccount}=useWalletContext();
     const [fetching,setFetching]=useState(false);
+    const [txState,setTxState]=useTransactionState();
     const [info,setInfo]=useState({
       loan:"",
       borrowTime:"",
@@ -24,6 +27,15 @@ export default function Burrow(){
     });
     const closeModal=()=>{
       setShowModal(false);
+    }
+    const borrow=async (amount,from)=>{
+      const contract=new BrtPool();
+       setShowModal(false);
+       setWaitingForWallet(true);
+       setTxState('Borrowing loan..')
+       await contract.borrow({from,value: amount * (10 ** 18)})
+       setWaitingForWallet(false);
+      
     }
 
     const changeCollateral=async()=>{
@@ -103,12 +115,13 @@ export default function Burrow(){
             </label>
 
             <div className="">
-            <svg className="w-6 h-6 md:invisible "xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg className={`w-6 h-6 md:invisible ${fetching?'animate-spin':null}`}xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
             </svg>
-            <svg className="w-6 h-6 invisible md:visible " xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg className={`w-6 h-6 invisible md:visible  ${fetching?'animate-spin':null}`} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
           </svg>
+          {fetching &&(<span className="my-4 text-gray-700">please wait calculating..</span>)}
             </div>
 
             
@@ -126,7 +139,7 @@ export default function Burrow(){
             </div>
            
               </div>
-             {fetching?"please wait...":null}
+
             
              {selectedNetwork != 1?
               <button className="bg-gray-900  md:block p-2 rounded text-white  button-disabled" disabled={info.loan == ""} onClick={()=>{setShowModal(true)}} >Continue</button>
@@ -147,7 +160,7 @@ export default function Burrow(){
                   </TxDetailsList>
                   <TxButtons close={closeModal} pending={true}>
                   
-                      <button className="border-2 border-solid border-gray-900  text-gray-900 p-2 flex button-disabled" disabled >
+                      <button className="border-2 border-solid border-gray-900  text-gray-900 p-2 flex button-disabled" disabled={selectedAccount?false:true} onClick={()=>{borrow(collateral.current.value,selectedAccount)}}>
                         Borrow
                         <svg
                         className="w-6 h-6"
@@ -169,6 +182,14 @@ export default function Burrow(){
               </TxDetailsModal> 
         
             </ModalOverlay>
+
+            
+            <ModalOverlay show={waitingForWallet}>
+            <WaitingForWallet message="waiting for confirnmation..">
+               <button className="bg-red-700 p-2 text-white rounded-full" onClick={()=>{setWaitingForWallet(!waitingForWallet)}}>Go Back</button>
+            </WaitingForWallet>
+         </ModalOverlay>
+
        </div>
        
      )

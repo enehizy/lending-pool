@@ -1,4 +1,5 @@
 import React,{useState} from 'react';
+import { useWalletContext } from '../hooks';
 import ModalOverlay from './ModalOverlay';
 import TxButtons from './TxButtons';
 import TxDetailsList from './TxDetailsList';
@@ -6,9 +7,10 @@ import TxDetailsListItem from './TxDetailsListItem';
 import TxDetailsModal from './TxDetailsModal';
 
 
-export default function CollateralCard({collateral,discount,marketPrice,soldAt}){
+export default function CollateralCard({id,collateral,discount,marketPrice,soldAt}){
 
     const [showModal,setShowModal]=useState(false)
+    const {selectedAccount} = useWalletContext();
     const openModal=()=>{
         setShowModal(true)
     }
@@ -43,19 +45,19 @@ export default function CollateralCard({collateral,discount,marketPrice,soldAt})
              <ModalOverlay show={showModal}>
                 <TxDetailsModal  headerTitle="Transaction Overview">
                     <TxDetailsList>
-                        <TxDetailsListItem title="Loan id" state="1"/>
-                        <TxDetailsListItem title="Discount" state="5%"/>
-                        <TxDetailsListItem title="Collateral Amount" state="500 ETH"/>
-                        <TxDetailsListItem title="Market price" state="500 BRT"/>
-                        <TxDetailsListItem title="Sold At" state="200 BRT"/>
+                        <TxDetailsListItem title="Loan id" state={id}/>
+                        <TxDetailsListItem title="Discount" state={`${discount} %`}/>
+                        <TxDetailsListItem title="Collateral Amount" state={`${collateral} ETH`}/>
+                        <TxDetailsListItem title="Market price" state={`${marketPrice} BRT`}/>
+                        <TxDetailsListItem title="Sold At" state={`${soldAt} BRT`}/>
                     </TxDetailsList>
                     <TxButtons close={closeModal}>
                                
 
-                        <button className="border-2 border-solid border-gray-900  text-gray-900 p-2 flex button-disabled" disabled >
+                        <button className="border-2 border-solid border-gray-900  text-gray-900 p-2 flex button-disabled" disabled={selectedAccount?true:false} >
                         Buy
                         <svg className="w-6 h-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                         </svg>
                         </button>
                         
