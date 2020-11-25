@@ -20,6 +20,7 @@ export default function Burrow(){
     const {web3,selectedNetwork,selectedAccount}=useWalletContext();
     const [fetching,setFetching]=useState(false);
     const [txState,setTxState]=useTransactionState();
+    const [transactionMessage,setTransactionMessage]=useState('');
     const [info,setInfo]=useState({
       loan:"",
       borrowTime:"",
@@ -31,11 +32,15 @@ export default function Burrow(){
     const borrow=async (amount,from)=>{
       const contract=new BrtPool();
        setShowModal(false);
+       setTransactionMessage(`Borrowing ${loan.current.value}BRT with ${collateral.current.value}ETH`);
        setWaitingForWallet(true);
        setTxState('Borrowing loan..')
        await contract.borrow({from,value: amount * (10 ** 18)})
+       loan.current.value=0;
+       collateral.current.value=0;
+       
        setWaitingForWallet(false);
-      
+        
     }
 
     const changeCollateral=async()=>{
@@ -109,7 +114,7 @@ export default function Burrow(){
               <label>
             <p className="md:text-xl"> Loan</p>
             <Symbol symbol="BRT" bgColor="bg-gray-400" padding="p-2 md:p-3 "/>
-            <input type="number" min="0" ref={loan} placeholder="loan amount" className=" p-2 md:p-3 border-2 border-dashed rounded text-gray-900" disabled={selectedNetwork ==1} onChange={()=>{changeCollateral()}}/>
+            <input type="number" min="0" ref={loan} placeholder="loan amount" className="bg-gray-200 p-2 md:p-3 border-2 border-dashed rounded text-gray-900" disabled={selectedNetwork ==1} onChange={()=>{changeCollateral()}}/>
     
 
             </label>
@@ -128,7 +133,7 @@ export default function Burrow(){
             <label>
             <p className="md:text-xl "> Collateral</p>
             <Symbol symbol="ETH" bgColor="bg-gray-400" padding="p-2 md:p-3"/>
-            <input type="number" min="0" ref={collateral} placeholder="collateral amount" className="p-2 md:p-3 border-2 border-dashed text-gary-900" disabled={selectedNetwork ==1} onChange={()=>{changeLoan()}}/>
+            <input type="number" min="0" ref={collateral} placeholder="collateral amount" className="bg-gray-200 p-2 md:p-3 border-2 border-dashed text-gary-900" disabled={selectedNetwork ==1} onChange={()=>{changeLoan()}}/>
            
            
             </label>
@@ -185,7 +190,7 @@ export default function Burrow(){
 
             
             <ModalOverlay show={waitingForWallet}>
-            <WaitingForWallet message="waiting for confirnmation..">
+            <WaitingForWallet message="waiting for confirnmation.." summary={transactionMessage}>
                <button className="bg-red-700 p-2 text-white rounded-full" onClick={()=>{setWaitingForWallet(!waitingForWallet)}}>Go Back</button>
             </WaitingForWallet>
          </ModalOverlay>

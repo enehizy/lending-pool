@@ -82,11 +82,21 @@ export default class BrtPool{
         await brtToken.methods.approve(addr,id).send({...options});
 
     }
+    async approveAndCall(addr,amount,signature,params,options){
+        await this.getContract();
+        const tokenAddr=await this.contract.methods.brtAddr().call();
+        const brtToken=new this.web3.eth.Contract(BrtToken.abi,tokenAddr);
+        await brtToken.methods.approveAndCall(addr,amount,signature,params).send({...options});
+
+    }
 
     async payback(loanId,options){
         await this.getContract();
         await this.contract.methods.payback(loanId).send({...options});
-    }  
+    } 
+    
+    
+
 
     async getActiveLoans(addr) 
  
@@ -125,7 +135,7 @@ export default class BrtPool{
         const loan=  await this.contract.methods.transferFrom(from,to,tokenId).send({...options});
     }
    
-
+    
     async borrowTime()
     {
         await this.getContract();

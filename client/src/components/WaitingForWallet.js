@@ -1,12 +1,13 @@
 import React from 'react'
 
-export default function WaitingForWallet({children,message}) {
+export default function WaitingForWallet({children,message,summary}) {
     return (
         <div className="bg-white max-width-500 mb-10 mt-10 rounded  flex justify-center items-center ">
               <div>x</div>
                      
                    <div className="space-y-4">
-                   <h2 className="text-center text-2xl">{message}</h2>
+                   <p className="text-red-700 text-xl text-center font-bold">{summary}</p>
+                   <h2 className="text-center text-xl font-semibold">{message}</h2>
                    <h3 className="text-center text-xl text-red-700">Wallet should popup anytime soon</h3>
                  
                    <div className="flex items-center justify-center">

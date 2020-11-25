@@ -20,7 +20,7 @@ contract BRTPOOL is BRTPOOLUTILS ,CollateralRedemptionToken{
     constructor() public{
       _createBrtTokenAndAddLiquidityToPool();
      
-
+     
     }
     
     event Borrowed(address indexed borrower,uint loanId,  uint redemptionPrice,uint collateral,uint expires);
@@ -44,20 +44,31 @@ contract BRTPOOL is BRTPOOLUTILS ,CollateralRedemptionToken{
 //   1603910689
 
    
-    function payback(uint loanId) external{
-         require(_isApprovedOrOwner(msg.sender, loanId),'Error collateral doesnt belong to this address');
+    function payback(uint loanId) public{
+         _payback(loanId, msg.sender);
+         
+    }  
+     function _payback(uint loanId,address payer) private{
+         require(_isApprovedOrOwner(payer, loanId),'Error collateral doesnt belong to this address');
          require(!isLoanExpiredAt(loanId,block.timestamp),'Error:loan has expired');
-         require(balanceOf(msg.sender) >= 1,'you do not have any exiting loan');
+         require(balanceOf(payer) >= 1,'you do not have any exiting loan');
          require(_exists(loanId),'Error: loan id does not exist');
          BRT brtToken=BRT(brtAddr);
          Collateral memory _loanInfo= loanInfo(loanId);
-         brtToken.transferFrom(msg.sender,address(this),_loanInfo.redemptionPrice);
+         brtToken.transferFrom(payer,address(this),_loanInfo.redemptionPrice);
          delete _collaterals[loanId];
          _burn(loanId);
-         msg.sender.transfer(_loanInfo.collateral);
+         address payable _payer =payable(payer);
+         _payer.transfer(_loanInfo.collateral);         
          
     }  
 
+    function payback(bytes memory _params,address _payer) public{
+      
+      
+       (uint _loanId)=abi.decode(_params,(uint256));
+       _payback(_loanId,_payer);  
+    }
 
 
     function getActiveLoans(address addr,uint unixTimeStamp) external view
@@ -144,7 +155,7 @@ contract BRTPOOL is BRTPOOLUTILS ,CollateralRedemptionToken{
     }
    
 
-   function liquidate(uint loanId) external {
+   function liquidate(uint loanId) public {
        require(_exists(loanId),'Error cant liqudate loan that does not exist');
        address _previousOwner=ownerOf(loanId);
        require(isLoanExpiredAt(loanId,block.timestamp),'Error: loan has not expired');
@@ -159,7 +170,13 @@ contract BRTPOOL is BRTPOOLUTILS ,CollateralRedemptionToken{
        msg.sender.transfer(_loanInfo.collateral);
        emit Liquidated(_previousOwner,loanId);
    }
-
+   
+   function liquidate(bytes memory _params) public{
+ 
+    (uint _loanId)=abi.decode(_params,(uint));
+    liquidate(_loanId);
+   }
+  
     
 
     function loanInfo(uint loanId) public view
