@@ -85,8 +85,9 @@ export default class BrtPool{
     async approveAndCall(addr,amount,signature,params,options){
         await this.getContract();
         const tokenAddr=await this.contract.methods.brtAddr().call();
+        console.log(tokenAddr);
         const brtToken=new this.web3.eth.Contract(BrtToken.abi,tokenAddr);
-        await brtToken.methods.approveAndCall(addr,amount,signature,params).send({...options});
+        await brtToken.methods.approveAndCall(`${addr}`,`${amount}`,signature,`${params}`).send({...options});
 
     }
 

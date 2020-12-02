@@ -1,31 +1,21 @@
 pragma solidity ^0.6.0;
 pragma experimental ABIEncoderV2;
 import '@openzeppelin/contracts/math/SafeMath.sol';
-import './tokens/BRT.sol';
 import './libraries/SafePercentage.sol';
-import './BRTPOOLUTILS.SOL';
+import './BRTPOOLUTILS.sol';
 import './tokens/CollateralRedemptionToken.sol';
+import '@openzeppelin/contracts/token/ERC20/ERC20.sol';
+import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
 contract BRTPOOL is BRTPOOLUTILS ,CollateralRedemptionToken{
-    address public brtAddr;
-    struct BrtTokenInfo{
-        uint8 decimals;
-        string name;
-        string symbol;
-
-    }
-    BrtTokenInfo public tokenInfo;
     using SafePercentage for uint;
     using SafeMath for uint;
-
-    constructor() public{
-      _createBrtTokenAndAddLiquidityToPool();
-     
-     
+    IERC20 token;
+    constructor(address tokenAddr) public{
+      token = IERC20(tokenAddr);
     }
-    
     event Borrowed(address indexed borrower,uint loanId,  uint redemptionPrice,uint collateral,uint expires);
     event Liquidated(address indexed borrower,uint  loanId);
-   
+    event PayBack(address spender,uint loanId);
     function borrow() public  payable
     returns(uint)
     {
@@ -35,39 +25,46 @@ contract BRTPOOL is BRTPOOLUTILS ,CollateralRedemptionToken{
         uint redemptionPrice =loan.add(fee);
         uint expires=borrowTime.add(block.timestamp);
 
-        BRT brtToken=BRT(brtAddr);
-        brtToken.transfer(msg.sender,loan); 
+       
+        token.transfer(msg.sender,loan); 
         uint id = _issueCollateralToken(redemptionPrice, msg.value, expires);
         emit Borrowed(msg.sender,id,redemptionPrice,msg.value,expires);
     }
 
-//   1603910689
+
 
    
     function payback(uint loanId) public{
+       
          _payback(loanId, msg.sender);
          
     }  
-     function _payback(uint loanId,address payer) private{
-         require(_isApprovedOrOwner(payer, loanId),'Error collateral doesnt belong to this address');
+     function _payback(uint loanId,address payer) internal{
+         require(_isApprovedOrOwner(payer,loanId),'Error collateral doesnt belong to this address');
          require(!isLoanExpiredAt(loanId,block.timestamp),'Error:loan has expired');
          require(balanceOf(payer) >= 1,'you do not have any exiting loan');
          require(_exists(loanId),'Error: loan id does not exist');
-         BRT brtToken=BRT(brtAddr);
-         Collateral memory _loanInfo= loanInfo(loanId);
-         brtToken.transferFrom(payer,address(this),_loanInfo.redemptionPrice);
+        
+        
+         uint _redemptionPrice= loanInfo(loanId).redemptionPrice;
+         uint _collateral= loanInfo(loanId).collateral;
+         token.transferFrom(payer,address(this),_redemptionPrice);
          delete _collaterals[loanId];
          _burn(loanId);
-         address payable _payer =payable(payer);
-         _payer.transfer(_loanInfo.collateral);         
+         payable(payer).transfer(_collateral);     
+         emit PayBack(address(this),loanId);     
          
     }  
 
-    function payback(bytes memory _params,address _payer) public{
+    function payback(bytes memory _params) public{
+
       
+       (uint _loanId,address _payer)=abi.decode(_params,(uint,address));
+        _payback(_loanId,_payer); 
+       emit PayBack(_payer,_loanId);  
+    
+   
       
-       (uint _loanId)=abi.decode(_params,(uint256));
-       _payback(_loanId,_payer);  
     }
 
 
@@ -161,13 +158,13 @@ contract BRTPOOL is BRTPOOLUTILS ,CollateralRedemptionToken{
        require(isLoanExpiredAt(loanId,block.timestamp),'Error: loan has not expired');
       
      
-       BRT brtToken =BRT(brtAddr);
-       Collateral memory _loanInfo=loanInfo(loanId);
-       brtToken.transferFrom(msg.sender,address(this),_loanInfo.redemptionPrice);
+       uint redemptionPrice=loanInfo(loanId).redemptionPrice;
+       uint collateral=loanInfo(loanId).collateral;
+       token.transferFrom(msg.sender,address(this),redemptionPrice);
        delete _collaterals[loanId];
        _burn(loanId);
    
-       msg.sender.transfer(_loanInfo.collateral);
+       msg.sender.transfer(collateral);
        emit Liquidated(_previousOwner,loanId);
    }
    
@@ -178,7 +175,7 @@ contract BRTPOOL is BRTPOOLUTILS ,CollateralRedemptionToken{
    }
   
     
-
+    
     function loanInfo(uint loanId) public view
     returns(Collateral memory)
     {  
@@ -189,8 +186,8 @@ contract BRTPOOL is BRTPOOLUTILS ,CollateralRedemptionToken{
     function getPoolBalance() public view
     returns(uint)
     {
-        BRT brtToken  = BRT(brtAddr);
-        return brtToken.balanceOf(address(this));
+    
+        return  token.balanceOf(address(this));
     }
     
      function _expiredLoanCounter(uint unixTimeStamp) internal view
@@ -206,14 +203,7 @@ contract BRTPOOL is BRTPOOLUTILS ,CollateralRedemptionToken{
        
    }
 
-    function _createBrtTokenAndAddLiquidityToPool ()private{
-        BRT brtToken = new BRT(address(this));
-        brtAddr = address(brtToken);
-        tokenInfo.name = BRT(brtAddr).name();
-        tokenInfo.symbol = BRT(brtAddr).symbol();
-        tokenInfo.decimals = BRT(brtAddr).decimals();
-    }
-     
+
 
 
 

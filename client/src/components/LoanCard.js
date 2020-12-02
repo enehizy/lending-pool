@@ -29,8 +29,8 @@ export default function LoanCard({borrowed,payBack,expires,id}){
         const loanInfo=await contract.loanInfo(loanId)
         const addr=BrtPoolJson.networks[`${network}`].address;
         console.log(addr)
-        const signature='payback(bytes memory)';
-        const params=web3.eth.abi.encodeParameter('uint256',`${loanId}`);
+        const signature='payback(bytes,address,address)';
+        const params=web3.eth.abi.encodeParameter('uint256',loanId);
         console.log(params)
         await contract.approveAndCall(addr,loanInfo.redemptionPrice,signature,`${params}`,{from:selectedAccount})
         .catch((e)=>{
