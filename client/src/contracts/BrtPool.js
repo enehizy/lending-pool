@@ -1,12 +1,12 @@
-import getWeb3 from '../getWeb3';
+
 import BrtPoolJson from '../abis/BRTPOOL.json';
-import BrtToken from '../abis/BRT.json'
+
 
 
 export default class BrtPool{
     
-   constructor(){
-       this.getContract();
+   constructor(web3){
+       this.web3=web3;
       
     }
 
@@ -14,13 +14,9 @@ export default class BrtPool{
     
 
     async getContract(){
-
-        const web3=await getWeb3();
-        const network=  await web3.eth.net.getId();
-        const contract=new web3.eth.Contract(BrtPoolJson.abi,BrtPoolJson.networks[`${network}`].address);
-        this.web3=web3;
+        const network=  await this.web3.eth.net.getId();
+        const contract=new this.web3.eth.Contract(BrtPoolJson.abi,BrtPoolJson.networks[`${network}`].address);
         this.contract=contract;
-        
     }
 
     
@@ -75,21 +71,21 @@ export default class BrtPool{
     }
 
 
-    async approveBrtToken(addr,id,options){
-        await this.getContract();
-        const tokenAddr=await this.contract.methods.brtAddr().call()
-        const brtToken=new this.web3.eth.Contract(BrtToken.abi,tokenAddr);
-        await brtToken.methods.approve(addr,id).send({...options});
+    // async approveBrtToken(addr,id,options){
+    //     await this.getContract();
+    //     const tokenAddr=await this.contract.methods.brtAddr().call()
+    //     const brtToken=new this.web3.eth.Contract(BrtToken.abi,tokenAddr);
+    //     await brtToken.methods.approve(addr,id).send({...options});
 
-    }
-    async approveAndCall(addr,amount,signature,params,options){
-        await this.getContract();
-        const tokenAddr=await this.contract.methods.brtAddr().call();
-        console.log(tokenAddr);
-        const brtToken=new this.web3.eth.Contract(BrtToken.abi,tokenAddr);
-        await brtToken.methods.approveAndCall(`${addr}`,`${amount}`,signature,`${params}`).send({...options});
+    // }
+    // async approveAndCall(addr,amount,signature,params,options){
+    //     await this.getContract();
+    //     const tokenAddr=await this.contract.methods.brtAddr().call();
+    //     console.log(tokenAddr);
+    //     const brtToken=new this.web3.eth.Contract(BrtToken.abi,tokenAddr);
+    //     await brtToken.methods.approveAndCall(`${addr}`,`${amount}`,signature,`${params}`).send({...options});
 
-    }
+    // }
 
     async payback(loanId,options){
         await this.getContract();

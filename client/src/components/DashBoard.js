@@ -9,17 +9,17 @@ import NothingFound from './NothingFound';
 
 export default function DashBoard(){
     const [loading,setLoading]=useState(true);
-    const {selectedAccount} =useWalletContext()
+    const {web3,selectedAccount} =useWalletContext()
     const [loans,setLoans]=useState([]);
     useEffect(()=>{
         (async()=>{
           
             if(selectedAccount){
-                const contract=new BrtPool();
+                const pool=new BrtPool(web3);
                 // await contract.borrow({from:selectedAccount,value: 1.2 * (10 ** 18)})
                 // await contract.isExpired(0);
 
-                const info=await contract._getActiveLoans(selectedAccount);
+                const info=await pool._getActiveLoans(selectedAccount);
                 if(info.length >=1){
                     setLoans(info);
                 }

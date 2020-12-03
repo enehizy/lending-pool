@@ -29,13 +29,13 @@ export default function Burrow(){
     const closeModal=()=>{
       setShowModal(false);
     }
-    const borrow=async (amount,from)=>{
-      const contract=new BrtPool();
+    const borrow=async (amount,from,web3)=>{
+      const pool=new BrtPool(web3);
        setShowModal(false);
        setTransactionMessage(`Borrowing ${loan.current.value}BRT with ${collateral.current.value}ETH`);
        setWaitingForWallet(true);
        setTxState('Borrowing loan..')
-       await contract.borrow({from,value: amount * (10 ** 18)})
+       await pool.borrow({from,value: amount * (10 ** 18)})
        loan.current.value=0;
        collateral.current.value=0;
        
@@ -43,13 +43,13 @@ export default function Burrow(){
         
     }
 
-    const changeCollateral=async()=>{
+    const changeCollateral=async(web3)=>{
       const ln=loan.current.value
       if(ln > 0 && `${ln}`.length > 0){
-          const contract= new BrtPool();
+          const pool= new BrtPool(web3);
           setFetching(true)
-          const col=await  contract.calculateCollateral(ln);
-          const borrowTime=await contract.borrowTime();
+          const col=await  pool.calculateCollateral(ln);
+          const borrowTime=await pool.borrowTime();
           const data={
             loan:ln,
             collateral:col  /(10 ** 18),
@@ -75,14 +75,14 @@ export default function Burrow(){
      
     }
 
-    const changeLoan=async()=>{
+    const changeLoan=async(web3)=>{
       const col=collateral.current.value;
       if(col > 0 && `${col}`.length){
-          const contract= new BrtPool();
+          const pool= new BrtPool(web3);
           setFetching(true)
         
-          const ln=await  contract.calculateLoan(col);
-          const borrowTime=await contract.borrowTime();
+          const ln=await  pool.calculateLoan(col);
+          const borrowTime=await pool.borrowTime();
           const data={
             loan:ln / (10 ** 18),
             borrowTime,
@@ -114,7 +114,7 @@ export default function Burrow(){
               <label>
             <p className="md:text-xl"> Loan</p>
             <Symbol symbol="BRT" bgColor="bg-gray-400" padding="p-2 md:p-3 "/>
-            <input type="number" min="0" ref={loan} placeholder="loan amount" className="bg-gray-200 p-2 md:p-3 border-2 border-dashed rounded text-gray-900" disabled={selectedNetwork ==1} onChange={()=>{changeCollateral()}}/>
+            <input type="number" min="0" ref={loan} placeholder="loan amount" className="bg-gray-200 p-2 md:p-3 border-2 border-dashed rounded text-gray-900" disabled={selectedNetwork ==1} onChange={()=>{changeCollateral(web3)}}/>
     
 
             </label>
@@ -133,7 +133,7 @@ export default function Burrow(){
             <label>
             <p className="md:text-xl "> Collateral</p>
             <Symbol symbol="ETH" bgColor="bg-gray-400" padding="p-2 md:p-3"/>
-            <input type="number" min="0" ref={collateral} placeholder="collateral amount" className="bg-gray-200 p-2 md:p-3 border-2 border-dashed text-gary-900" disabled={selectedNetwork ==1} onChange={()=>{changeLoan()}}/>
+            <input type="number" min="0" ref={collateral} placeholder="collateral amount" className="bg-gray-200 p-2 md:p-3 border-2 border-dashed text-gary-900" disabled={selectedNetwork ==1} onChange={()=>{changeLoan(web3)}}/>
            
            
             </label>
@@ -152,7 +152,7 @@ export default function Burrow(){
              }
             
             
-             <ModalOverlay show={showModal}>
+             <ModalOverlay show={showModal} label="borrow modal">
 
           
                    <TxDetailsModal show={true} headerTitle="Transaction Overview" >
@@ -165,7 +165,7 @@ export default function Burrow(){
                   </TxDetailsList>
                   <TxButtons close={closeModal} pending={true}>
                   
-                      <button className="border-2 border-solid border-gray-900  text-gray-900 p-2 flex button-disabled" disabled={selectedAccount?false:true} onClick={()=>{borrow(collateral.current.value,selectedAccount)}}>
+                      <button className="border-2 border-solid border-gray-900  text-gray-900 p-2 flex button-disabled" disabled={selectedAccount?false:true} onClick={()=>{borrow(collateral.current.value,selectedAccount,web3)}}>
                         Borrow
                         <svg
                         className="w-6 h-6"
