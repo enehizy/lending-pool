@@ -39,6 +39,11 @@ contract BRTPOOL is BRTPOOLUTILS ,CollateralRedemptionToken{
          _payback(loanId, msg.sender);
          
     }  
+     function payback(bytes memory _params) public{
+       (uint _loanId,address _payer)=abi.decode(_params,(uint,address));
+        _payback(_loanId,_payer); 
+      
+    }
      function _payback(uint loanId,address payer) internal{
          require(_isApprovedOrOwner(payer,loanId),'Error collateral doesnt belong to this address');
          require(!isLoanExpiredAt(loanId,block.timestamp),'Error:loan has expired');
@@ -56,31 +61,31 @@ contract BRTPOOL is BRTPOOLUTILS ,CollateralRedemptionToken{
          
     }  
 
-    function payback(bytes memory _params) public{
-
-      
-       (uint _loanId,address _payer)=abi.decode(_params,(uint,address));
-        _payback(_loanId,_payer); 
-       emit PayBack(_payer,_loanId);  
-    
    
-      
-    }
 
 
-    function getActiveLoans(address addr,uint unixTimeStamp) external view
+    function getActiveLoans(address addr,uint unixTimeStamp) public view
     returns(uint[] memory)
     {  
      
-       uint[] memory _loans= new uint[](_loanCounter(unixTimeStamp));
-       if(_loanCounter(unixTimeStamp) >= 1){
+       uint[] memory _loans= new uint[](_loanCounter(unixTimeStamp,addr));
+       uint loan_i;
+       if(_loanCounter(unixTimeStamp,addr) >= 1){
 
          for(uint i =0;i < _collaterals.length;i++){
-         if(ownerOf(i) == addr && isLoanExpiredAt(i,unixTimeStamp) == false){
-            _loans[i]=i;
-         }
+          
+              
+              if(_collaterals[i].expires > 0){
+                  if(ownerOf(i) == addr && isLoanExpiredAt(i,unixTimeStamp) == false){
 
-                }
+                     
+                      loan_i =loan_i + 1;
+                      _loans[loan_i -1]=i;
+                      
+                  }
+              }
+         
+        }
      
 
        }
@@ -88,14 +93,18 @@ contract BRTPOOL is BRTPOOLUTILS ,CollateralRedemptionToken{
        
     }
 
-    function _loanCounter(uint unixTimeStamp) private view
+    function _loanCounter(uint unixTimeStamp,address addr) private view
     returns(uint)
     {
        uint _count;
        for(uint i =0;i < _collaterals.length;i++){
-         if(ownerOf(i) == msg.sender && isLoanExpiredAt(i,unixTimeStamp) == false){
+           if(_collaterals[i].expires > 0){
+                if(ownerOf(i) == addr && isLoanExpiredAt(i,unixTimeStamp) == false){
             _count = _count + 1;
          }
+  
+           }
+        
        }
        return _count;
 
@@ -109,7 +118,11 @@ contract BRTPOOL is BRTPOOLUTILS ,CollateralRedemptionToken{
        require(loanId < _collaterals.length,'Error: invalid loan id');
     //    require(_collaterals[loanId].expires != 0,'Error: collateral does not exist');
        require(_exists(loanId),'Error: loan id does not exist');
-       return unixTimeStamp  >=  _collaterals[loanId].expires;
+       
+          return unixTimeStamp  >=  _collaterals[loanId].expires;
+   
+     
+     
 
     }
 
@@ -123,10 +136,12 @@ contract BRTPOOL is BRTPOOLUTILS ,CollateralRedemptionToken{
       require(_loanIds.length <= _collaterals.length,'Error: number of id parameters exceeds number of collaterals');
       bool _isExpired;
       for(uint i =0;i < _loanIds.length;i++){
-          if(isLoanExpiredAt(_loanIds[i],unixTimeStamp)){
+        if(_collaterals[i].expires > 0){
+          if(isLoanExpiredAt(_loanIds[i],unixTimeStamp) ==true){
               _isExpired =true;
               break;
           }
+        }
       }
       return _isExpired;
     } 
@@ -135,24 +150,51 @@ contract BRTPOOL is BRTPOOLUTILS ,CollateralRedemptionToken{
     returns(uint[] memory)
     {
        uint _numberOfExpiredLoans =_expiredLoanCounter(unixTimeStamp);
+       uint[] memory _expiredLoanIds = new uint[](_numberOfExpiredLoans);
+       uint loan_i;
        if( _numberOfExpiredLoans >= 1){
-         uint[] memory _expiredLoanIds = new uint[](_numberOfExpiredLoans);
+        
                  for(uint i = 0; i < _collaterals.length; i++){
-           if(isLoanExpiredAt(i,unixTimeStamp) == true){
-             _expiredLoanIds[i] = i;
-           }
+                if(_collaterals[i].expires > 0){
+                        if(isLoanExpiredAt(i,unixTimeStamp) == true){
+                           
+                              loan_i =loan_i + 1;
+                              _expiredLoanIds[loan_i -1] = i;
+                        }
+                }
        }
-       return _expiredLoanIds;
-
+      
+        return _expiredLoanIds;
        }
-       
-    //    require(_numberOfExpiredLoans >= 1,'Error No Expired loans found');
       
 
     }
+     function _expiredLoanCounter(uint unixTimeStamp) internal view
+    returns(uint)
+    {
+        uint _count;
+        for(uint i = 0; i < _collaterals.length; i++){
+          if(_collaterals[i].expires > 0){
+           if(isLoanExpiredAt(i,unixTimeStamp) == true){
+             _count= _count + 1;
+           }
+          }
+        }
+       return _count;
+       
+   }
    
 
-   function liquidate(uint loanId) public {
+   function liquidate(uint loanId) public{
+       _liquidate(loanId, msg.sender);
+   }
+    function liquidate(bytes memory _params) public{
+    (uint _loanId,address payer)=abi.decode(_params,(uint,address));
+    _liquidate(_loanId,payer);
+   }
+  
+
+   function _liquidate(uint loanId,address payer) public {
        require(_exists(loanId),'Error cant liqudate loan that does not exist');
        address _previousOwner=ownerOf(loanId);
        require(isLoanExpiredAt(loanId,block.timestamp),'Error: loan has not expired');
@@ -160,19 +202,16 @@ contract BRTPOOL is BRTPOOLUTILS ,CollateralRedemptionToken{
      
        uint redemptionPrice=loanInfo(loanId).redemptionPrice;
        uint collateral=loanInfo(loanId).collateral;
-       token.transferFrom(msg.sender,address(this),redemptionPrice);
+       token.transferFrom(payer,address(this),redemptionPrice);
        delete _collaterals[loanId];
        _burn(loanId);
    
-       msg.sender.transfer(collateral);
+       payable(payer).transfer(collateral);
        emit Liquidated(_previousOwner,loanId);
    }
+
+
    
-   function liquidate(bytes memory _params) public{
- 
-    (uint _loanId)=abi.decode(_params,(uint));
-    liquidate(_loanId);
-   }
   
     
     
@@ -190,18 +229,7 @@ contract BRTPOOL is BRTPOOLUTILS ,CollateralRedemptionToken{
         return  token.balanceOf(address(this));
     }
     
-     function _expiredLoanCounter(uint unixTimeStamp) internal view
-    returns(uint)
-    {
-        uint _count;
-        for(uint i = 0; i < _collaterals.length; i++){
-           if(isLoanExpiredAt(i,unixTimeStamp) == true){
-             _count= _count + 1;
-           }
-        }
-       return _count;
-       
-   }
+    
 
 
 

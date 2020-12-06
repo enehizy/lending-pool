@@ -11,14 +11,14 @@ import NothingFound from './NothingFound';
     //  const [loading,setLoading]=useState(false);
      const [loading,setLoading]=useState(true);
      const [loans,setLoans]=useState([]);
-     const {selectedAccount}=useWalletContext();
+     const {selectedAccount,web3}=useWalletContext();
      useEffect(()=>{
      (async ()=>{
       if(selectedAccount){
          
-          const contract = new BrtPool();
+          const pool = new BrtPool(web3);
           // await contract.borrow({from:selectedAccount,value: 1.2 * (10 ** 18)})
-         const exLoans= await contract._getExpiredLoans();
+         const exLoans= await pool._getExpiredLoans();
           if(exLoans.length >= 1){
             setLoans(exLoans);
             console.log(exLoans);

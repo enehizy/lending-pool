@@ -100,16 +100,19 @@ export default class BrtPool{
     {  
         await this.getContract();
         const time =Math.round(Date.now() /1000);
-        const activeLoans=  await this.contract.methods.getActiveLoans(addr,time).call();
-        return activeLoans;
+        const result=  await this.contract.methods.getActiveLoans(addr,time).call();
+        return result;
+
+        // return activeLoans;
     }
     
 
-    async getExpiredLoanIds(options)
+    async getExpiredLoanIds()
     { 
         await this.getContract();
         const time =Math.round(Date.now() /1000);
-        const expiredLoans=  await this.contract.methods.getExpiredLoanIds(time).call({...options});
+        const expiredLoans=  await this.contract.methods.getExpiredLoanIds(time).call();
+         
         return expiredLoans;
 
     }
@@ -160,14 +163,23 @@ export default class BrtPool{
     }
     async _getActiveLoans(addr){
         await this.getContract();
-        const acLoans=await this.getActiveLoans(addr);
-        console.log({acLoans})
+        let acLoans=await this.getActiveLoans(addr);
+        console.log(acLoans)
         const activeLoans=[];
+        if(acLoans.length < 1){
+            return [];
+        }
         
-        for(let i=0;i < acLoans.length;i++){
-            const {redemptionPrice,collateral,expires}= await this.loanInfo(acLoans[i]);
+        let info;
+        let id;
+        for(var i=0;i < acLoans.length;i++){
+            
+            id =acLoans[i];
+          
+             const {redemptionPrice,collateral,expires}= await this.loanInfo(id);
+            
             activeLoans.push({
-               id:acLoans[i],
+               id,
                redemptionPrice,
                collateral,
                expires
@@ -179,17 +191,25 @@ export default class BrtPool{
     }
 
     async _getExpiredLoans(){
-        await this.getContract();
-        const exLoan= await this.getExpiredLoanIds();
-        let loan;
-        let marketPrice;
+        // await this.getContract();
+        const exLoans= await this.getExpiredLoanIds();
+        
         const loans =[];
-        for(let i=0;i< exLoan.length;i++){
-            loan =await this.loanInfo(exLoan[i])
+       
+      
+       
+    if(exLoans.length < 1){
+        return [];
+    }
+    let loan;
+    let marketPrice;
+        for(let i=0;i < exLoans.length;i++){
+          
+            loan =await this.loanInfo(exLoans[i]);
 
             marketPrice = await this.convertToBrtFromEth(loan.collateral / (10 ** 18))
             loans.push({
-                id:exLoan[i],
+                id:exLoans[i],
                 collateral:loan.collateral,
                 redemptionPrice:loan.redemptionPrice,
                 marketPrice,

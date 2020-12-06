@@ -29,6 +29,15 @@ export default class Brt{
         const params=this.web3.eth.abi.encodeParameters(['uint256','address'],[`${loanId}`,`${options.from}`]);
         await this.approveAndCall(spender,loanInfo.redemptionPrice,signature,params,{...options});
     }
+
+    async _approveAndLiquidate(spender,loanId,options){
+        await this.getContract();
+        const pool=new BrtPool(this.web3);
+        const loanInfo=await pool.loanInfo(loanId);
+        const signature='liquidate(bytes)';
+        const params=this.web3.eth.abi.encodeParameters(['uint256','address'],[`${loanId}`,`${options.from}`]);
+        await this.approveAndCall(spender,loanInfo.redemptionPrice,signature,params,{...options});
+    }
     
 
 
