@@ -11,6 +11,14 @@ export default function DashBoard(){
     const [loading,setLoading]=useState(true);
     const {web3,selectedAccount} =useWalletContext()
     const [loans,setLoans]=useState([]);
+    const removeLoan=(id)=>{
+
+     const result=  loans.filter((loan)=>{
+        return  loan.id !== id;
+       })
+       setLoans(result);
+
+    }
     useEffect(()=>{
         (async()=>{
           
@@ -43,7 +51,7 @@ export default function DashBoard(){
                    <LoanListTitle/>
                    {loans.map((loan)=>{
                        return(
-                           <LoanCard borrowed={loan.collateral /(10 ** 18)} payBack={loan.redemptionPrice  /(10 ** 18)} expires={loan.expires} id={loan.id}/>
+                           <LoanCard borrowed={loan.collateral /(10 ** 18)} payBack={loan.redemptionPrice  /(10 ** 18)} expires={loan.expires} id={loan.id} removeLoan={removeLoan}/>
                        )
        
                    })}

@@ -9,7 +9,7 @@ import TxDetailsListItem from './TxDetailsListItem';
 import TxDetailsModal from './TxDetailsModal';
 import WaitingForWallet from './WaitingForWallet';
 import BrtPoolJson from '../abis/BRTPOOL.json';
-export default function LoanCard({borrowed,payBack,expires,id}){
+export default function LoanCard({borrowed,payBack,expires,id,removeLoan}){
     const [showModal,setShowModal]=useState(false)
     const {web3,selectedAccount}=useWalletContext()
     const [buttons,setButtons]=useState(false);
@@ -25,18 +25,23 @@ export default function LoanCard({borrowed,payBack,expires,id}){
     }
     const payback=async (loanId,web3,options)=>{
         const token =new BrtToken(web3);
+        setShowModal(false);
+        setTransactionMessage(`Payback loan id:${id}`);
+        setWaitingForWallet(true);
         const network=  await web3.eth.net.getId();
         const poolAddr=BrtPoolJson.networks[`${network}`].address;
         await token._approveAndPayback(poolAddr,loanId,options);
-        
+        removeLoan(`${loanId}`);
+        setWaitingForWallet(false);
        
     }
     const transferFrom=async (to,tokenId,options,web3)=>{
         const pool=new BrtPool(web3);
         setTransferModal(false);
-        setTransactionMessage(`Transfering loan ${id} to ${to}`);
+        setTransactionMessage(`Transfering loan id:${id} to ${to}`);
         setWaitingForWallet(true);
         await pool.transferFrom(options.from,to,tokenId,{...options});
+        removeLoan(`${tokenId}`);
         setWaitingForWallet(false);
     }
     return(

@@ -4,7 +4,7 @@ import {useTransactionState} from '../hooks';
 
 export default function TxLoader() {
     const [txState,setTxState] =useTransactionState();
-    if(txState !== ''){
+    if(txState){
         return (
             <div className="flex justify-left items-center space-x-2 "> 
         <div className="flex p-2 shadow-lg bg-gray-700 text-white rounded"><LoadingIcon/>{txState}</div><p className="border-2 border-gray-900 p-1 rounded">3 Transactions

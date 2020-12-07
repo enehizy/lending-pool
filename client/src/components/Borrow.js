@@ -36,9 +36,6 @@ export default function Burrow(){
        setWaitingForWallet(true);
        setTxState('Borrowing loan..')
        await pool.borrow({from,value: amount * (10 ** 18)})
-       loan.current.value=0;
-       collateral.current.value=0;
-       
        setWaitingForWallet(false);
         
     }

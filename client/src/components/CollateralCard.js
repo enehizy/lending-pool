@@ -7,11 +7,14 @@ import TxDetailsListItem from './TxDetailsListItem';
 import TxDetailsModal from './TxDetailsModal';
 import BrtPoolJson from '../abis/BRTPOOL.json';
 import BrtToken from '../contracts/Brt';
+import WaitingForWallet from './WaitingForWallet';
 
-export default function CollateralCard({id,collateral,discount,marketPrice,soldAt}){
+export default function CollateralCard({id,collateral,discount,marketPrice,soldAt,removeLoan}){
 
     const [showModal,setShowModal]=useState(false)
     const {web3,selectedAccount} = useWalletContext();
+    const [waitingForWallet,setWaitingForWallet]=useState(false);
+    const [transactionMessage,setTransactionMessage]=useState('');
     const openModal=()=>{
         setShowModal(true)
     }
@@ -20,10 +23,14 @@ export default function CollateralCard({id,collateral,discount,marketPrice,soldA
     }
     const liquidate=async (loanId,web3,options)=>{
         const token =new BrtToken(web3);
+        setShowModal(false);
+        setTransactionMessage(`Liquidating loan -> id:${id}`);
+        setWaitingForWallet(true);
         const network=  await web3.eth.net.getId();
         const poolAddr=BrtPoolJson.networks[`${network}`].address;
-        await token._approveAndLiquidate(poolAddr,loanId,options);
-        
+        await token._approveAndLiquidate(poolAddr,id,options);
+        removeLoan(`${id}`);
+        setWaitingForWallet(false);
        
     }
     
@@ -51,7 +58,15 @@ export default function CollateralCard({id,collateral,discount,marketPrice,soldA
              
             
              </div>
-             <ModalOverlay show={showModal}>
+           
+             <ModalOverlay show={waitingForWallet} label="waiting modal">
+               
+            <WaitingForWallet message="waiting for confirmation.." summary={transactionMessage}>
+               <button className="bg-red-700 p-2 text-white rounded-full" onClick={()=>{setWaitingForWallet(!waitingForWallet)}}>Go Back</button>
+            </WaitingForWallet>
+         </ModalOverlay>
+
+             <ModalOverlay show={showModal} label="transaction modal">
                 <TxDetailsModal  headerTitle="Transaction Overview" label="transaction modal">
                     <TxDetailsList>
                         <TxDetailsListItem title="Loan id" state={id}/>
@@ -63,7 +78,7 @@ export default function CollateralCard({id,collateral,discount,marketPrice,soldA
                     <TxButtons close={closeModal}>
                                
 
-                        <button className="border-2 border-solid border-gray-900  text-gray-900 p-2 flex button-disabled" disabled={selectedAccount?true:false} onClick={()=>{
+                        <button className="border-2 border-solid border-gray-900  text-gray-900 p-2 flex button-disabled" disabled={selectedAccount?false:true} onClick={()=>{
                             liquidate(id,web3,{from:selectedAccount});
                         }}>
                         Buy
